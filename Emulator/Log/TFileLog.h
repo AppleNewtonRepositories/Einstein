@@ -35,23 +35,22 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 111 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TFileLog
-	:
-		public TLog
+		: public TLog
 {
 public:
 	///
 	/// Constructor from a file path.
 	/// The file is created and the log appended to it.
 	///
-	TFileLog( const char* inFilePath );
+	TFileLog(const char* inFilePath);
 
 	///
 	/// Destructor.
 	///
-	virtual ~TFileLog( void );
+	virtual ~TFileLog(void);
 
 private:
 	///
@@ -59,14 +58,14 @@ private:
 	///
 	/// \param inLine	line to log.
 	///
-	virtual void	DoLogLine( const char* inLine );
+	virtual void DoLogLine(const char* inLine);
 
 	/// \name Variables
-	FILE*			mFile; ///< Reference to the file.
+	FILE* mFile; ///< Reference to the file.
 };
 
 #endif
-		// _TFILELOG_H
+// _TFILELOG_H
 
 // ========================================================================= //
 // Real software engineers don't like the idea of some inexplicable and      //

@@ -1,0 +1,749 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+use_FL_COMMAND
+header_name {.h}
+code_name {.cpp}
+decl {\#include "Toolkit/TToolkit.h"} {private global
+}
+
+decl {\#include "app/FLTK/TFLApp.h"} {private global
+}
+
+decl {\#include "Toolkit/TFLTerminalPanel.h"} {public global
+}
+
+decl {\#include <FL/Fl_Button.H>} {public global
+}
+
+decl {\#include "Toolkit/TFLScriptPanel.h"} {public global
+}
+
+decl {\#include <FL/fl_draw.H>} {private global
+}
+
+decl {\#include <FL/Fl_Help_Dialog.H>} {private global
+}
+
+decl {Fl_Menu_Item *wTKOpenRecentMenu[8];} {private global
+}
+
+decl {Fl_Help_Dialog *tkHelpDialog = nullptr;} {private local
+}
+
+data tkHelpText {private local filename {TTkHelpText.html} textmode
+}
+
+class TFlDropButton {
+  comment {// This button calls its callback with the text
+// that is dropped on it (for example, a filename)} open : {public Fl_Button}
+} {
+  Function {TFlDropButton(int x, int y, int w, int h, const char *label=nullptr) : Fl_Button(x, y, w, h, label)} {} {
+    code {} {}
+  }
+  Function {handle(int e)} {open protected return_type int
+  } {
+    code {switch (e) {
+  case FL_DND_ENTER: 
+  case FL_DND_DRAG:
+  case FL_DND_RELEASE:
+    return 1;
+  case FL_PASTE:
+    if (callback())
+      do_callback(this, (void*)Fl::event_text());
+    return 1;
+}
+return Fl_Button::handle(e);} {}
+  }
+}
+
+Function {tk_open_recent_cb(Fl_Menu_Item *, void *u)} {open private return_type void
+} {
+  code {char *filename = ::strdup((char*)u);
+gToolkit->UserActionOpen(filename);
+::free(filename);} {}
+}
+
+Function {add_proto_cb(Fl_Menu_Bar *mb, void *)} {open private return_type void
+} {
+  code {auto mi = mb->mvalue();
+if (mi)
+  gToolkit->UserActionAddProto(mi->label());} {}
+}
+
+Function {CreateToolkitWindow(int x, int y)} {open
+} {
+  Fl_Window wToolkitWindow {open
+    xywh {408 471 720 600} type Double resizable
+    code0 {wToolkitWindow->position(x, y);} visible
+  } {
+    Fl_Menu_Bar wToolkitMenubar {open
+      xywh {0 0 720 24} color 52
+      code0 {o->box(FL_FREE_BOXTYPE);}
+      class TFLMenuBar
+    } {
+      Submenu {} {
+        label File open
+        xywh {0 0 100 20}
+      } {
+        MenuItem {} {
+          label {New...}
+          callback {gToolkit->UserActionNew();}
+          xywh {0 0 100 20} shortcut 0x40006e
+        }
+        MenuItem {} {
+          label {Open...}
+          callback {gToolkit->UserActionOpen();}
+          xywh {0 0 100 20} shortcut 0x40006f
+        }
+        Submenu {} {
+          label {Open Recent} open
+          xywh {0 0 62 20}
+        } {
+          MenuItem {wTKOpenRecentMenu[0]} {
+            label {
+}
+            callback tk_open_recent_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {wTKOpenRecentMenu[1]} {
+            label {
+}
+            callback tk_open_recent_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {wTKOpenRecentMenu[2]} {
+            label {
+}
+            callback tk_open_recent_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {wTKOpenRecentMenu[3]} {
+            label {
+}
+            callback tk_open_recent_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {wTKOpenRecentMenu[4]} {
+            label {
+}
+            callback tk_open_recent_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {wTKOpenRecentMenu[5]} {
+            label {
+}
+            callback tk_open_recent_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {wTKOpenRecentMenu[6]} {
+            label {
+}
+            callback tk_open_recent_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {wTKOpenRecentMenu[7]} {
+            label {
+}
+            callback tk_open_recent_cb
+            xywh {0 0 31 20} divider
+          }
+          MenuItem {} {
+            label {Clear Menu}
+            callback {gToolkit->ClearRecentFileMenu();}
+            xywh {0 0 31 20}
+          }
+        }
+        Submenu {} {
+          label {Sample Projects} open
+          xywh {20 20 100 20} divider
+        } {
+          MenuItem {} {
+            label {Hello World}
+            callback {gToolkit->LoadSampleCode(1);}
+            xywh {20 20 100 20}
+          }
+          MenuItem {} {
+            label {Miles Per Gallon}
+            callback {gToolkit->LoadSampleCode(2);}
+            xywh {20 20 100 20}
+          }
+          MenuItem {} {
+            label {Native Function}
+            callback {gToolkit->LoadSampleCode(3);}
+            xywh {40 40 100 20}
+          }
+          MenuItem {} {
+            label {ROM Patcher}
+            callback {gToolkit->LoadSampleCode(4);}
+            xywh {40 40 100 20}
+          }
+        }
+        MenuItem {} {
+          label Save
+          callback {gToolkit->UserActionSave();}
+          xywh {0 0 100 20} shortcut 0x400073
+        }
+        MenuItem {} {
+          label {Save As...}
+          callback {gToolkit->UserActionSaveAs();}
+          xywh {0 0 100 20} shortcut 0x410073
+        }
+        MenuItem {} {
+          label Close
+          callback {gToolkit->UserActionClose();}
+          xywh {0 0 100 20} shortcut 0x400077 divider
+        }
+        MenuItem {} {
+          label {Page Setup...}
+          xywh {0 0 100 20} deactivate
+        }
+        MenuItem {} {
+          label {Print...}
+          xywh {0 0 100 20} shortcut 0x400070 deactivate divider
+        }
+        MenuItem {} {
+          label Quit
+          callback {gToolkit->UserActionQuit();}
+          xywh {0 0 100 20} shortcut 0x400071
+        }
+      }
+      Submenu {} {
+        label Edit open
+        xywh {0 0 100 20}
+      } {
+        MenuItem {} {
+          label Undo
+          callback {gToolkit->UserActionUndo();}
+          xywh {12 12 100 20} shortcut 0x40007a deactivate
+        }
+        MenuItem {} {
+          label Redo
+          callback {gToolkit->UserActionRedo();}
+          xywh {12 12 100 20} shortcut 0x41007a deactivate divider
+        }
+        MenuItem {} {
+          label Cut
+          callback {gToolkit->UserActionCut();}
+          xywh {0 0 100 20} shortcut 0x400078 deactivate
+        }
+        MenuItem {} {
+          label Copy
+          callback {gToolkit->UserActionCopy();}
+          xywh {0 0 100 20} shortcut 0x400063 deactivate
+        }
+        MenuItem {} {
+          label Paste
+          callback {gToolkit->UserActionPaste();}
+          xywh {0 0 100 20} shortcut 0x400076 deactivate divider
+        }
+        MenuItem {} {
+          label Find
+          callback {gToolkit->UserActionFind();}
+          xywh {12 12 100 20} shortcut 0x400066
+        }
+        MenuItem {} {
+          label {Find Next}
+          callback {gToolkit->UserActionFindNext();}
+          xywh {24 24 100 20} shortcut 0x400067
+        }
+        MenuItem {} {
+          label {Find And Replace}
+          callback {gToolkit->UserActionReplaceNext();}
+          xywh {36 36 100 20} shortcut 0x480066
+        }
+      }
+      Submenu {} {
+        label Project open
+        xywh {0 0 100 20}
+      } {
+        MenuItem {} {
+          label {New Project...}
+          xywh {0 0 100 20} deactivate
+        }
+        MenuItem {} {
+          label {Open Project...}
+          xywh {0 0 100 20} deactivate divider
+        }
+        MenuItem {} {
+          label {Add File...}
+          xywh {0 0 100 20} deactivate
+        }
+        MenuItem {} {
+          label {Remove File}
+          xywh {0 0 100 20} deactivate divider
+        }
+        MenuItem {} {
+          label Build
+          callback {gToolkit->UserActionBuild();}
+          xywh {4 4 100 20} shortcut 0x400062
+        }
+        MenuItem {} {
+          label Install
+          callback {gToolkit->UserActionInstall();}
+          xywh {4 4 100 20} shortcut 0x400032
+        }
+        MenuItem {} {
+          label Run
+          callback {gToolkit->UserActionRun();}
+          xywh {4 4 100 20} shortcut 0x400072
+        }
+        MenuItem {} {
+          label Stop
+          callback {gToolkit->UserActionStop();}
+          xywh {16 16 100 20} shortcut 0x40002e divider
+        }
+        MenuItem {} {
+          label {Process Earlier}
+          callback {gToolkit->AppInstall();}
+          xywh {16 16 100 20} shortcut 0xffbf deactivate
+        }
+        MenuItem {} {
+          label {Process Later}
+          callback {gToolkit->AppBuild();
+gToolkit->AppInstall();
+gToolkit->AppRun();}
+          xywh {16 16 100 20} shortcut 0xffc0 deactivate divider
+        }
+        MenuItem {} {
+          label {Project Settings...}
+          callback {gToolkit->AppStop();}
+          xywh {28 28 100 20} shortcut 0x40002e deactivate
+        }
+      }
+      Submenu {} {
+        label Protos open
+        xywh {0 0 62 20}
+      } {
+        Submenu {} {
+          label {More cl Views} open
+          xywh {0 0 62 20}
+        } {
+          MenuItem {} {
+            label clGaugeView
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label clKeyboardView
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label clMonthView
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label clOutline
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label clRemoteView
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+        }
+        Submenu {} {
+          label {More protos} open
+          xywh {0 0 62 20} divider
+        } {
+          MenuItem {} {
+            label protoActionButton
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoBorder
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoDateExpando
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoDrawer
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoExpandoShell
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoFilingButton
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoFolderTab
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoGlance
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoKeyboard
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoKeypad
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoLabeledBatteryGauge
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoPhoneExpando
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoPicker
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoPictIndexer
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoPictRadionButton
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoPrintFormat
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoRoll
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoRollBrowser
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoRollItem
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoSetClock
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoStatusBar
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoTable
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoTableEntry
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label protoTextList
+            callback add_proto_cb
+            xywh {0 0 31 20}
+          }
+        }
+        MenuItem {} {
+          label clView
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label clParagraphView
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label clPictureView
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label clPolygonView
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label clEditView
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoStaticText
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoApp
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoFloatNGo
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoFloater
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoStatus
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoTitle
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoRecToggle
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoLargeClosebox
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoTextButton
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoPictureButton
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoCheckButton
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoRCheckButton
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoRadioButton
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoRadioCluster
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoCloseBox
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoLabelInputLine
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoInputLine
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoLabelPicker
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoDivider
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoGauge
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoSlider
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label protoTextExpando
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label LinkedSubview
+          callback add_proto_cb
+          xywh {0 0 31 20}
+        }
+      }
+      Submenu {} {
+        label Help open
+        xywh {0 0 100 20}
+      } {
+        MenuItem {} {
+          label {Toolkit Manual...}
+          callback {if (!tkHelpDialog) {
+  tkHelpDialog = new Fl_Help_Dialog();
+  tkHelpDialog->value(tkHelpText);
+}
+tkHelpDialog->show();}
+          xywh {12 12 100 20}
+        }
+        MenuItem {} {
+          label {Decompile Package...}
+          callback {gToolkit->UserActionDecompilePkg();}
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label {About Toolkit...}
+          xywh {0 0 100 20} deactivate
+        }
+      }
+    }
+    Fl_Group wToolkitToolbar {
+      xywh {0 24 720 32} box THIN_UP_BOX color 52
+      code0 {o->box(FL_FREE_BOXTYPE);}
+    } {
+      Fl_Button wToolkitRun {
+        label {@>}
+        callback {gToolkit->UserActionRun();}
+        xywh {10 28 32 24} color 52 labelsize 16 labelcolor 48 align 528
+        code0 {o->box(FL_FREE_BOXTYPE);}
+        code1 {o->down_box(FL_FREE_BOXTYPE);}
+        code2 {o->clear_visible_focus();}
+      }
+      Fl_Button wToolkitStop {
+        label {@square}
+        callback {gToolkit->UserActionStop();}
+        xywh {46 28 32 24} color 52 labelsize 10 labelcolor 48 align 528
+        code0 {o->box(FL_FREE_BOXTYPE);}
+        code1 {o->down_box(FL_FREE_BOXTYPE);}
+        code2 {o->clear_visible_focus();}
+      }
+      Fl_Button wToolkitDecompile {
+        label {@refresh}
+        user_data 0L
+        callback {gToolkit->UserActionDecompilePkg((char*)v);}
+        tooltip {drop packes here to decompile them} xywh {678 28 32 24} color 52 labelsize 10 labelcolor 48 align 528
+        code0 {o->box(FL_THIN_DOWN_BOX);}
+        code1 {o->down_box(FL_FREE_BOXTYPE);}
+        code2 {o->clear_visible_focus();}
+        class TFlDropButton
+      }
+      Fl_Box {} {
+        xywh {87 30 584 26} hide resizable
+      }
+    }
+    Fl_Group wToolkitFindGroup {open
+      xywh {0 56 720 58} box FLAT_BOX color 50
+    } {
+      Fl_Box {} {
+        label Replace
+        xywh {6 62 50 20} labelsize 11 align 24
+      }
+      Fl_Box {} {
+        label With
+        xywh {6 88 50 20} labelsize 11 align 24
+      }
+      Fl_Group {} {open
+        xywh {58 62 488 46} resizable
+      } {
+        Fl_Input wToolkitFindText {
+          callback {gToolkit->UserActionFindTextChanged();}
+          xywh {58 62 488 20} color 54 labelsize 11 when 0 textfont 4 textsize 12
+          code0 {wToolkitFindText->when(FL_WHEN_ENTER_KEY_CHANGED);}
+        }
+        Fl_Input wToolkitReplaceText {
+          callback {gToolkit->UserActionReplaceTextChanged();}
+          xywh {58 88 488 20} color 54 labelsize 11 when 1 textfont 4 textsize 12
+        }
+      }
+      Fl_Button wToolkitFindCase {
+        label Aa
+        callback {gToolkit->UserActionCaseChanged();}
+        xywh {556 62 32 20} type Toggle color 50 labelsize 12
+      }
+      Fl_Button wToolkitFindRegex {
+        label {[a]}
+        callback {gToolkit->UserActionRegexChanged();}
+        xywh {588 62 32 20} type Toggle color 50 labelsize 12 deactivate
+      }
+      Fl_Button wToolkitFindPrev {
+        label {<}
+        callback {gToolkit->UserActionFindPrev();}
+        xywh {626 62 32 20} color 50 labelsize 12
+      }
+      Fl_Button wToolkitFindNext {
+        label {>}
+        callback {gToolkit->UserActionFindNext();}
+        xywh {658 62 32 20} color 50 labelsize 12
+      }
+      Fl_Button wToolkitFindHide {
+        label X
+        callback {gToolkit->UserActionFindHide();}
+        xywh {701 58 18 18} box FLAT_BOX down_box DOWN_BOX color 51 labelsize 11
+      }
+      Fl_Button wToolkitReplaceNext {
+        label Replace
+        callback {gToolkit->UserActionReplaceNext();}
+        xywh {626 88 64 20} color 50 labelsize 12
+      }
+      Fl_Button wToolkitReplaceAll {
+        label All
+        callback {gToolkit->UserActionReplaceAll();}
+        xywh {690 88 24 20} color 50 labelsize 12
+      }
+    }
+    Fl_Tile wTile {open
+      xywh {0 114 720 486} resizable
+      class TFLTile
+    } {
+      Fl_Group wScriptPanel {selected
+        xywh {0 114 720 386} resizable
+        class TFLScriptPanel
+      } {}
+      Fl_Text_Display wToolkitTerminal {
+        xywh {0 500 720 100} box THIN_DOWN_FRAME selection_color 246 textfont 4
+        class TFLTerminalEditor
+      }
+    }
+  }
+  code {wScriptPanel->GetEditor()->take_focus();} {}
+}
+
+Function {CreateProjectSettingsWindow()} {open
+} {}

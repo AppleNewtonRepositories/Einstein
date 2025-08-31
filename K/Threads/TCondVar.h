@@ -2,32 +2,32 @@
 // Fichier:			TCondVar.h
 // Projet:			K
 // Ecrit par:		Paul Guyot (pguyot@kallisys.net)
-// 
-// Créé le:			26/5/2005
+//
+// Cr√©√© le:			26/5/2005
 // Tabulation:		4 espaces
-// 
+//
 // ***** BEGIN LICENSE BLOCK *****
 // Version: MPL 1.1
-// 
+//
 // The contents of this file are subject to the Mozilla Public License Version
 // 1.1 (the "License"); you may not use this file except in compliance with
 // the License. You may obtain a copy of the License at
 // http://www.mozilla.org/MPL/
-// 
+//
 // Software distributed under the License is distributed on an "AS IS" basis,
 // WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the
 // License.
-// 
+//
 // The Original Code is TCondVar.h.
-// 
+//
 // The Initial Developer of the Original Code is Paul Guyot.
 // Portions created by the Initial Developer are Copyright (C) 2005 the
 // Initial Developer. All Rights Reserved.
-// 
+//
 // Contributor(s):
 //   Paul Guyot <pguyot@kallisys.net> (original author)
-// 
+//
 // ***** END LICENSE BLOCK *****
 // ===========
 // $Id: TCondVar.h,v 1.2 2007/07/11 01:36:30 pguyot Exp $
@@ -40,26 +40,20 @@
 
 // ANSI C & POSIX
 #if TARGET_OS_WIN32
-	#include <windows.h>
-	#include <process.h>
-	typedef struct {
-	  int waiters_count_;
-	  CRITICAL_SECTION waiters_count_lock_;
-	  HANDLE sema_;
-	  HANDLE waiters_done_;
-	  size_t was_broadcast_;
-	} win_pthread_cond_t;
-	#if _MSC_VER
-		typedef struct timespec {
-			long tv_sec;  // seconds
-			long tv_nsec; // nanoseconds
-		} timespec;
-	#endif
-	#ifndef ETIMEDOUT
-		#define ETIMEDOUT 60
-	#endif
+#include <process.h>
+#include <windows.h>
+typedef struct {
+	int waiters_count_;
+	CRITICAL_SECTION waiters_count_lock_;
+	HANDLE sema_;
+	HANDLE waiters_done_;
+	size_t was_broadcast_;
+} win_pthread_cond_t;
+#ifndef ETIMEDOUT
+#define ETIMEDOUT 60
+#endif
 #else
-	#include <pthread.h>
+#include <pthread.h>
 #endif
 
 class TMutex;
@@ -70,7 +64,7 @@ class TMutex;
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 1.2 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TCondVar
 {
@@ -78,22 +72,22 @@ public:
 	///
 	/// Default constructor.
 	///
-	TCondVar( void );
+	TCondVar(void);
 
 	///
 	/// Destructor.
 	///
-	~TCondVar( void );
+	~TCondVar(void);
 
 	///
 	/// Signal the conditional variable.
 	///
-	void Signal( void );
+	void Signal(void);
 
 	///
 	/// Broadcast the conditional variable, i.e. unblock every thread.
 	///
-	void Broadcast( void );
+	void Broadcast(void);
 
 	///
 	/// Wait for a limited time for the conditional variable to be freed.
@@ -104,7 +98,7 @@ public:
 	/// \return \c true if the system time didn't reach inAbsTime, \c false
 	///			otherwise.
 	///
-	Boolean TimedWait( TMutex* inMutex, const struct timespec* inAbsTime );
+	Boolean TimedWait(TMutex* inMutex, const struct timespec* inAbsTime);
 
 	///
 	/// Wait for a limited time for the conditional variable to be freed.
@@ -115,41 +109,41 @@ public:
 	///			otherwise.
 	///
 	Boolean TimedWaitRelative(
-						TMutex* inMutex,
-						const struct timespec* inAbsTime );
+		TMutex* inMutex,
+		const struct timespec* inAbsTime);
 
 	///
 	/// Wait for the conditional variable to be freed.
 	///
 	/// \param inMutex		mutex to unlock.
 	///
-	void Wait( TMutex* inMutex );
+	void Wait(TMutex* inMutex);
 
 private:
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TCondVar( const TCondVar& inCopy );
+	TCondVar(const TCondVar& inCopy);
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TCondVar& operator = ( const TCondVar& inCopy );
+	TCondVar& operator=(const TCondVar& inCopy);
 
 	/// \name Variables
 #if TARGET_OS_WIN32
-	win_pthread_cond_t	mCondVar;	///< Condition variable.
+	win_pthread_cond_t mCondVar; ///< Condition variable.
 #else
-	pthread_cond_t		mCondVar;	///< Condition variable.
+	pthread_cond_t mCondVar; ///< Condition variable.
 #endif
 };
 
 #endif
-		// _TCONDVAR_H
+// _TCONDVAR_H
 
 // =========================================================================== //
 // "But what we need to know is, do people want nasally-insertable computers?" //

@@ -1,14 +1,20 @@
-# Log CMakeLists
+#
+# Add source files required to build Einstein.
+#
 
-file(GLOB headers *.h)
-file(GLOB sources *.cp)
+list ( APPEND cmake_sources
+	Emulator/Log/CMakeLists.txt
+)
 
-set_source_files_properties(${sources} PROPERTIES LANGUAGE CXX)
-
-add_library(log STATIC ${sources})
-target_include_directories(log PUBLIC
-    ../
-    ../../
-    )
-
-target_link_libraries(log k)
+list ( APPEND common_sources
+	Emulator/Log/TBufferLog.cpp
+	Emulator/Log/TBufferLog.h
+	Emulator/Log/TFileLog.cpp
+	Emulator/Log/TFileLog.h
+	Emulator/Log/TLog.cpp
+	Emulator/Log/TLog.h
+	Emulator/Log/TRAMLog.cpp
+	Emulator/Log/TRAMLog.h
+	Emulator/Log/TStdOutLog.cpp
+	Emulator/Log/TStdOutLog.h
+)

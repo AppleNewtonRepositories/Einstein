@@ -2,7 +2,7 @@
 // File:			TEmulator.h
 // Project:			Einstein
 //
-// Copyright 2003-2007 by Paul Guyot (pguyot@kallisys.net).
+// Copyright 2003-2022 by Paul Guyot (pguyot@kallisys.net).
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,13 +25,14 @@
 #define _TEMULATOR_H
 
 #include <K/Defines/KDefinitions.h>
+#include <functional>
 
 // Einstein
-#include "TARMProcessor.h"
-#include "TMemory.h"
+#include "Emulator/TARMProcessor.h"
+#include "Emulator/TMemory.h"
 #include "Log/TLog.h"
+#include "Serial/TSerialPorts.h"
 
-class TSerialPortManager;
 class TInterruptManager;
 class TDMAManager;
 class TPlatformManager;
@@ -51,11 +52,11 @@ class TFileManager;
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 151 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TEmulator
 {
-  friend class TMonitor;
+	friend class TMonitor;
 
 public:
 	///
@@ -70,17 +71,16 @@ public:
 	/// \param inSoundManager		sound manager.
 	/// \param inScreenManager		screen manager.
 	/// \param inRAMSize			size of the RAM installed (in bytes)
-	/// \param inExtrSerialPortManager	serial port manager
 	///
 	TEmulator(
-			TLog* inLog,
-			TROMImage* inROMImage,
-			const char* inFlashPath,
-			TSoundManager* inSoundManager,
-			TScreenManager* inScreenManager,
-			TNetworkManager* inNetworkManager,
-			KUInt32 inRAMSize = 0x00400000,
-			TSerialPortManager* inExtrSerialPortManager = 0L);
+		TLog* inLog,
+		TROMImage* inROMImage,
+		const char* inFlashPath,
+		TSoundManager* inSoundManager,
+		TScreenManager* inScreenManager,
+		TNetworkManager* inNetworkManager,
+		KUInt32 inRAMSize = 0x00400000,
+		TPrinterManager* inPrinterManager = nullptr);
 
 	///
 	/// Constructor from a rom image buffer.
@@ -92,386 +92,419 @@ public:
 	/// \param inRAMSize			size of the RAM installed (in bytes)
 	///
 	TEmulator(
-			  TLog* inLog,
-			  KUInt8* inROMImageBuffer,
-			  const char* inFlashPath,
-			  KUInt32 inRAMSize = 0x00400000);
+		TLog* inLog,
+		KUInt8* inROMImageBuffer,
+		const char* inFlashPath,
+		KUInt32 inRAMSize = 0x00400000);
 
 	///
 	/// Destructor.
 	///
-	~TEmulator( void );
-	
+	~TEmulator(void);
+
 	///
 	/// Run the emulator until it is interrupted.
 	///
-	void	Run( void );
+	void Run(void);
 
 	///
 	/// Perform a single step.
 	/// This is useful for debugging. Timers are suspended.
 	///
-	void	Step( void );
+	void Step(void);
 
 	///
 	/// Signal an interrupt.
 	///
-	inline void	SignalInterrupt( void )
-		{
-			mSignal = false;
-			mInterrupted = true;
-		}
-	
+	inline void
+	SignalInterrupt(void)
+	{
+		mSignal = false;
+		mInterrupted = true;
+	}
+
 	///
 	/// Called after the interrupt was processed.
 	///
-	inline void	AckInterrupt( void )
+	inline void
+	AckInterrupt(void)
+	{
+		if (mRunning && (!mPaused))
 		{
-			if (mRunning && (!mPaused))
-			{
-				mSignal = true;
-			}
-			mInterrupted = false;
+			mSignal = true;
 		}
+		mInterrupted = false;
+	}
 
 	///
 	/// Stop the emulator.
 	///
-	void	Stop( void );
+	void Stop(void);
 
 	///
 	/// Breakpoint.
 	/// Method called by the processor when it encounters a BKPT instruction.
 	///
-	inline void	Breakpoint( KUInt16 inID )
-		{
-			mSignal = false;
-			mRunning = false;
-			mBPHalted = true;
-			mBPID = inID;
-			// We can suppose the emulator is running now.
-			// mInterruptManager.WakeEmulatorThread();
-		}
-	
+	inline void
+	Breakpoint(KUInt16 inID)
+	{
+		mSignal = false;
+		mRunning = false;
+		mBPHalted = true;
+		mBPID = inID;
+		// We can suppose the emulator is running now.
+		// mInterruptManager.WakeEmulatorThread();
+	}
+
 	///
 	/// NewtonOS Debugger UND instruction.
 	/// Method called by the processor when it encounters a SystemBootUND
 	/// instruction.
 	///
-	void		SystemBootUND( KUInt32 inPAddr );
-	
+	void SystemBootUND(KUInt32 inPAddr);
+
 	///
 	/// NewtonOS Debugger UND instruction.
 	/// Method called by the processor when it encounters a DebuggerUND
 	/// instruction.
 	///
-	void		DebuggerUND( KUInt32 inPAddr );
-		
+	void DebuggerUND(KUInt32 inPAddr);
+
 	///
 	/// NewtonOS Debugger UND instruction.
 	/// Method called by the processor when it encounters a TapFileCntlUND
 	/// instruction.
 	///
-	void		TapFileCntlUND( KUInt32 inPAddr );
-	
+	void TapFileCntlUND(KUInt32 inPAddr);
+
 	///
 	/// Selector on the monitor.
 	///
 	/// \param inMonitor	reference to the monitor.
 	///
-	void		SetMonitor( TMonitor* inMonitor )
-		{
-			mMonitor = inMonitor;
-		}
+	void
+	SetMonitor(TMonitor* inMonitor)
+	{
+		mMonitor = inMonitor;
+	}
 
 	///
 	/// Selector on the file manager interface.
 	///
 	/// \param inMonitor	reference to the manager.
 	///
-	void		SetFileManager( TFileManager* inManager )
-		{
-			mFileManager = inManager;
-		}
+	void
+	SetFileManager(TFileManager* inManager)
+	{
+		mFileManager = inManager;
+	}
 
 	///
 	/// Break in monitor, if present (don't do anything otherwise).
 	///
-	void		BreakInMonitor( void );
-	
+	void BreakInMonitor(const char* msg = NULL);
+
 	///
 	/// Determine if we're stopped in a breakpoint.
 	///
 	/// \return \c true if we are.
 	///
-	inline Boolean	IsBPHalted( void )
-		{
-			return mBPHalted;
-		}
-	
+	inline Boolean
+	IsBPHalted(void)
+	{
+		return mBPHalted;
+	}
+
 	///
 	/// Determine if we're processing an interrupt.
 	///
 	/// \return \c true if we are.
 	///
-	inline Boolean	IsInterrupted( void )
-		{
-			return mInterrupted;
-		}
+	inline Boolean
+	IsInterrupted(void)
+	{
+		return mInterrupted;
+	}
 
 	///
 	/// Return the ID of the Breakpoint.
 	///
 	/// \return the ID.
 	///
-	inline KUInt16	GetBPID( void )
-		{
-			return mBPID;
-		}
-	
+	inline KUInt16
+	GetBPID(void)
+	{
+		return mBPID;
+	}
+
 	///
 	/// Determine if we're paused.
 	///
 	/// \return \c true if we are.
 	///
-	inline Boolean	IsPaused( void )
-		{
-			return mPaused;
-		}
-	
+	inline Boolean
+	IsPaused(void)
+	{
+		return mPaused;
+	}
+
 	///
 	/// Determine if we're running.
 	///
 	/// \return \c true if we are.
 	///
-	inline Boolean	IsRunning( void )
-		{
-			return mRunning;
-		}
+	inline Boolean
+	IsRunning(void)
+	{
+		return mRunning;
+	}
 
 	///
 	/// Accessor on the CPU.
 	///
 	/// \return a pointer on the CPU interface.
 	///
-	TARMProcessor*  GetProcessor( void )
-		{
-			return &mProcessor;
-		}
-	
+	TARMProcessor*
+	GetProcessor(void)
+	{
+		return &mProcessor;
+	}
+
 	///
 	/// Accessor on the memory interface.
 	///
 	/// \return a pointer on the memory interface.
 	///
-	TMemory*  GetMemory( void )
-		{
-			return &mMemory;
-		}
-	
+	TMemory*
+	GetMemory(void)
+	{
+		return &mMemory;
+	}
+
 	///
 	/// Accessor on the interrupt manager interface.
 	///
-	TInterruptManager*  GetInterruptManager( void )
-		{
-			return mInterruptManager;
-		}
-	
+	TInterruptManager*
+	GetInterruptManager(void)
+	{
+		return mInterruptManager;
+	}
+
+	///
+	/// Accessor on the printer manager interface.
+	///
+	/// \return a pointer to the printer manager.
+	///
+	TPrinterManager*
+	GetPrinterManager(void)
+	{
+		return mPrinterManager;
+	}
+
 	///
 	/// Accessor on the sound manager interface.
 	///
 	/// \return a pointer to the sound manager.
 	///
-	TSoundManager*  GetSoundManager( void )
+	TSoundManager*
+	GetSoundManager(void)
 	{
 		return mSoundManager;
 	}
-	
+
 	///
 	/// Accessor on the network manager interface.
 	///
 	/// \return a pointer to the network manager.
 	///
-	TNetworkManager*  GetNetworkManager( void )
+	TNetworkManager*
+	GetNetworkManager(void)
 	{
 		return mNetworkManager;
 	}
-	
+
 	///
 	/// Accessor on the sound manager interface.
 	///
 	/// \return a pointer to the screen manager.
 	///
-	TScreenManager*  GetScreenManager( void )
-		{
-			return mScreenManager;
-		}
+	TScreenManager*
+	GetScreenManager(void)
+	{
+		return mScreenManager;
+	}
 
 	///
 	/// Accessor on the file manager interface.
 	///
 	/// \return a pointer to the file manager.
 	///
-	TFileManager*  GetFileManager( void )
-		{
-			return mFileManager;
-		}
-	
+	TFileManager*
+	GetFileManager(void)
+	{
+		return mFileManager;
+	}
+
 	///
 	/// Accessor on the sound manager interface.
 	///
 	/// \return a pointer to the screen manager.
 	///
-	TPlatformManager*  GetPlatformManager( void )
-		{
-			return mPlatformManager;
-		}
-	
+	TPlatformManager*
+	GetPlatformManager(void)
+	{
+		return mPlatformManager;
+	}
+
 	///
 	/// Accessor on the DMA manager interface.
 	///
 	/// \return a pointer to the DMA manager.
 	///
-	TDMAManager*  GetDMAManager( void )
-		{
-			return mDMAManager;
-		}
-	
-	///
-	/// Accessor on the external serial port.
-	///
-	/// \return a pointer to the serial port.
-	///
-	TSerialPortManager*	GetExternalSerialPort( void )
-		{
-			return mExternalPort;
-		}
-
-	///
-	/// Accessor on the infrared serial port.
-	///
-	/// \return a pointer to the serial port.
-	///
-	TSerialPortManager*	GetInfraredSerialPort( void )
-		{
-			return mInfraredPort;
-		}
-
-	///
-	/// Accessor on the built-in extra serial port.
-	///
-	/// \return a pointer to the serial port.
-	///
-	TSerialPortManager*	GetBuiltInExtraSerialPort( void )
-		{
-			return mBuiltInExtraPort;
-		}
-
-	///
-	/// Accessor on the modem serial port.
-	///
-	/// \return a pointer to the serial port.
-	///
-	TSerialPortManager*	GetModemSerialPort( void )
-		{
-			return mModemPort;
-		}
+	TDMAManager*
+	GetDMAManager(void)
+	{
+		return mDMAManager;
+	}
 
 	///
 	/// Accessor to the NewtonID.
 	///
 	/// \return a pointer to the NewtonID.
 	///
-	const KUInt32*		GetNewtonID( void )
-		{
-			return mNewtonID;
-		}
+	const KUInt32*
+	GetNewtonID(void)
+	{
+		return mNewtonID;
+	}
+
+	///
+	/// Accessor on the logger
+	///
+	/// \return a pointer to the logger instance.
+	///
+	TLog*
+	GetLog(void)
+	{
+		return mLog;
+	}
 
 	///
 	/// Pause system and wait for next interrupt.
 	///
-	inline void	PauseSystem( void )
-		{
-			mSignal = false;
-			mPaused = true;
-		}
-	
+	inline void
+	PauseSystem(void)
+	{
+		mSignal = false;
+		mPaused = true;
+	}
+
 	///
 	/// Quit.
 	///
-	void		Quit( void );
+	void Quit(void);
 
 	///
 	/// Save the state to a file.
 	///
 	/// \return an error code if a problem occurred.
 	///
-	void		SaveState( const char* inPath );
-	
+	void SaveState(const char* inPath);
+
 	///
 	/// Load the state from a file.
 	///
 	/// \return an error code if a problem occurred.
 	///
-	void		LoadState( const char* inPath );
+	void LoadState(const char* inPath);
 
 	///
 	/// Save or restore the state to or from a file.
 	///
-	void		TransferState( TStream* inStream );
-	
-	///
-	/// Insert a card.
-	///
-	void		InsertCard( void );
-	
+	void TransferState(TStream* inStream);
+
 	///
 	/// Set a new NewtonID
 	///
-	void		SetNewtonID(KUInt32 inID0, KUInt32 inID1);
-	
+	void SetNewtonID(KUInt32 inID0, KUInt32 inID1);
+
+	///
+	/// Managed access to all serial port drivers
+	///
+	TSerialPorts SerialPorts; ///< Serial port driver access
+
+	///
+	/// Lets the Host App set a callback, so it knows when to quit
+	///
+	void CallOnQuit(std::function<void()> inCallback);
+
+	void
+	DoPowerRestored()
+	{
+		if (mCallOnPowerRestored)
+			mCallOnPowerRestored();
+	}
+
+	void
+	OnPowerRestored(std::function<void()> inCallback)
+	{
+		mCallOnPowerRestored = std::move(inCallback);
+	}
+
+	void
+	ZAPMemory(bool inZAP)
+	{
+		mZAPMemory = inZAP;
+	}
+
+	bool
+	ZAPMemory()
+	{
+		return mZAPMemory;
+	}
+
 private:
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TEmulator( const TEmulator& inCopy );
+	TEmulator(const TEmulator& inCopy);
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TEmulator& operator = ( const TEmulator& inCopy );
+	TEmulator& operator=(const TEmulator& inCopy);
 
 	/// \name Variables
-	TMemory				mMemory;			///< Memory.
-	TARMProcessor		mProcessor;			///< CPU.
-	TInterruptManager*	mInterruptManager;	///< Interrupt manager.
-	TDMAManager*		mDMAManager;		///< DMA manager.
-	TPlatformManager*	mPlatformManager;	///< Platform manager.
-	TSerialPortManager*	mExternalPort;		///< External serial port.
-	TSerialPortManager*	mInfraredPort;		///< Infrared serial port.
-	TSerialPortManager*	mBuiltInExtraPort;	///< Built-in Extra serial port.
-	TSerialPortManager*	mModemPort;			///< Modem serial port.
-	TNetworkManager*	mNetworkManager;	///< Network manager.
-	TSoundManager*		mSoundManager;		///< Sound manager.
-	TScreenManager*		mScreenManager;		///< Screen manager.
-	TFileManager*       mFileManager;
-	KUInt32				mNewtonID[2];		///< NewtonID (48 bits, 16+32).
-	TLog*				mLog;				///< Interface for logging.
-	TMonitor*			mMonitor;			///< Monitor (or \c nil).
-	bool				mSignal;			///< Signal for JIT (if we're running).
-	KUInt32				mInterrupted;		///< We got a (processor) interrupt.
-	KUInt32				mRunning;			///< If we're running.
-	KUInt32				mPaused;			///< If we're paused (until next interrupt).
-	KUInt32				mBPHalted;			///< If we're halted because of a breakpoint.
-	KUInt16				mBPID;				///< ID of the breakpoint.
+	TMemory mMemory; ///< Memory.
+	TARMProcessor mProcessor; ///< CPU.
+	TInterruptManager* mInterruptManager; ///< Interrupt manager.
+	TDMAManager* mDMAManager; ///< DMA manager.
+	TPlatformManager* mPlatformManager; ///< Platform manager.
+	TNetworkManager* mNetworkManager; ///< Network manager.
+	TPrinterManager* mPrinterManager; ///< Printer manager
+	TSoundManager* mSoundManager; ///< Sound manager.
+	TScreenManager* mScreenManager; ///< Screen manager.
+	TFileManager* mFileManager;
+	KUInt32 mNewtonID[2]; ///< NewtonID (48 bits, 16+32).
+	TLog* mLog; ///< Interface for logging.
+	TMonitor* mMonitor; ///< Monitor (or \c nil).
+	Boolean mSignal; ///< Signal for JIT (if we're running).
+	KUInt32 mInterrupted; ///< We got a (processor) interrupt.
+	KUInt32 mRunning; ///< If we're running.
+	KUInt32 mPaused; ///< If we're paused (until next interrupt).
+	KUInt32 mBPHalted; ///< If we're halted because of a breakpoint.
+	KUInt16 mBPID; ///< ID of the breakpoint.
+	std::function<void()> mCallOnQuit; ///< Call this when the user quits Einstein
+	std::function<void()> mCallOnPowerRestored;
+	bool mZAPMemory = false; ///< if set, OS will offer to erase internal flash on next Reset
 };
 
 #endif
-		// _TEMULATOR_H
+// _TEMULATOR_H
 
 // ============================================================================== //
 // Hacker's Guide To Cooking:                                                     //

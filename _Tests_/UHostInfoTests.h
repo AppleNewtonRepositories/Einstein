@@ -2,12 +2,12 @@
 // Fichier:			UHostInfoTests.h
 // Projet:			Einstein
 // Ecrit par:		Paul Guyot (pguyot@kallisys.net)
-// 
-// Créé le:			22/5/2005
+//
+// Cr√©√© le:			22/5/2005
 // Tabulation:		4 espaces
-// 
-// Copyright:		© 2005 by Paul Guyot.
-// 					Tous droits réservés pour tous pays.
+//
+// Copyright:		¬© 2005 by Paul Guyot.
+// 					Tous droits r√©serv√©s pour tous pays.
 // ===========
 // $Id: UHostInfoTests.h 147 2005-09-29 20:17:58Z paul $
 // ===========
@@ -25,7 +25,7 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 147 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class UHostInfoTests
 {
@@ -33,11 +33,11 @@ public:
 	///
 	/// Test THostInfo
 	///
-	static void HostInfoTest( TLog* inLog );
+	static void HostInfoTest(TLog* inLog);
 };
 
 #endif
-		// _UHOSTINFOTESTS_H
+// _UHOSTINFOTESTS_H
 
 // ====================================================== //
 // The world is coming to an end ... SAVE YOUR BUFFERS!!! //

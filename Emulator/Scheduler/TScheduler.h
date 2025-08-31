@@ -35,89 +35,89 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision$
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TScheduler
 {
 public:
 	///
-	/// Constructeur par défaut.
+	/// Constructeur par d√©faut.
 	///
-	TScheduler( void );
+	TScheduler(void);
 
 	///
 	/// Destructeur.
 	///
-	~TScheduler( void );
+	~TScheduler(void);
 
 	///
 	/// Add a task if not current.
 	///
-	void AddWhenNotCurrent( TTask* inTask );
+	void AddWhenNotCurrent(TTask* inTask);
 
 	///
 	/// Add a task.
 	///
-	void Add( TTask* inTask );
+	void Add(TTask* inTask);
 
 	///
 	/// Remove a task.
 	///
-	void Remove( TTask* inTask );
+	void Remove(TTask* inTask);
 
 	///
 	/// Enter atomic.
 	///
-	void EnterAtomic( void );
+	void EnterAtomic(void);
 
 	///
 	/// Exit atomic.
 	///
-	void ExitAtomic( void );
+	void ExitAtomic(void);
 
 	///
 	/// Say we want schedule.
 	/// NOP.
 	///
-	void WantSchedule( void );
+	void WantSchedule(void);
 
 	///
 	/// Put the scheduler on hold.
 	///
-	void HoldSchedule( void );
+	void HoldSchedule(void);
 
 	///
 	/// Allow other tasks.
 	///
-	void AllowSchedule( void );
+	void AllowSchedule(void);
 
 private:
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TScheduler( const TScheduler& inCopy );
+	TScheduler(const TScheduler& inCopy);
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TScheduler& operator = ( const TScheduler& inCopy );
+	TScheduler& operator=(const TScheduler& inCopy);
 
 	///
 	/// Get the current task.
 	///
-	TTask* GetCurrentTask( void );
+	TTask* GetCurrentTask(void);
 
 	/// \name Variables
-	KUInt32				mHoldScheduleLevel;	///< Equivalent to gHoldScheduleLevel.
-	TDoubleLinkedList	mTasks;				///< List of the tasks.
+	KUInt32 mHoldScheduleLevel; ///< Equivalent to gHoldScheduleLevel.
+	TDoubleLinkedList mTasks; ///< List of the tasks.
 };
 
 #endif
-		// _TSCHEDULER_H
+// _TSCHEDULER_H
 
 // ===================================================================== //
 // The number of UNIX installations has grown to 10, with more expected. //

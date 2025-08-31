@@ -1,16 +1,20 @@
-# CMakeLists.txt
+#
+# Add source files required to build Einstein.
+#
 
-file(GLOB headers *.h)
-file(GLOB sources *.cp)
+list ( APPEND cmake_sources
+	Emulator/PCMCIA/CMakeLists.txt
+)
 
-set_source_files_properties(${sources} PROPERTIES LANGUAGE CXX)
-
-add_library(pcmcia STATIC ${sources})
-target_include_directories(pcmcia PUBLIC
-    ../
-    ../JIT/
-    ../JIT/Generic
-    ../../
-    )
-
-target_link_libraries(pcmcia k)
+list ( APPEND common_sources
+	Emulator/PCMCIA/TATACard.cpp
+	Emulator/PCMCIA/TATACard.h
+	Emulator/PCMCIA/TLinearCard.cpp
+	Emulator/PCMCIA/TLinearCard.h
+	Emulator/PCMCIA/TNE2000Card.cpp
+	Emulator/PCMCIA/TNE2000Card.h
+	Emulator/PCMCIA/TPCMCIACard.cpp
+	Emulator/PCMCIA/TPCMCIACard.h
+	Emulator/PCMCIA/TPCMCIAController.cpp
+	Emulator/PCMCIA/TPCMCIAController.h
+)

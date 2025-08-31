@@ -25,20 +25,20 @@
 #define _TJITGENERIC_DATAPROCESSINGPSRTRANSFER_H
 
 #include <K/Defines/KDefinitions.h>
-#include "JIT.h"
+#include "Emulator/JIT/JIT.h"
 
 // Einstein
-#include "TARMProcessor.h"
+#include "Emulator/TARMProcessor.h"
 
 void
 Translate_DataProcessingPSRTransfer(
-					JITPageClass* inPage,
-					KUInt16* ioUnitCrsr,
-					KUInt32 inInstruction,
-					KUInt32 inVAddr );
+	JITPageClass* inPage,
+	KUInt16* ioUnitCrsr,
+	KUInt32 inInstruction,
+	KUInt32 inVAddr);
 
 #endif
-		// _TJITGENERIC_DATAPROCESSINGPSRTRANSFER_H
+// _TJITGENERIC_DATAPROCESSINGPSRTRANSFER_H
 
 // ================== //
 // fortune: not found //

@@ -26,6 +26,9 @@
 #define _TMONITOR_H
 
 #include <K/Defines/KDefinitions.h>
+#include <K/Threads/TCondVar.h>
+#include <K/Threads/TMutex.h>
+#include <K/Threads/TThread.h>
 
 #include "TMonitorCore.h"
 #include "Emulator/Log/TBufferLog.h"
@@ -42,7 +45,7 @@ class TSymbolList;
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 113 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TMonitor : public TMonitorCore
 {
@@ -51,123 +54,174 @@ public:
 	/// Constructor from the emulator.
 	///
 	TMonitor(
-			TBufferLog* inLog,
-			TEmulator* inEmulator,
-			TSymbolList* inSymbolList,
-			const char* inROMPath);
+		TBufferLog* inLog,
+		TEmulator* inEmulator,
+		TSymbolList* inSymbolList,
+		const char* inMonitorStartupScriptPath);
 
 	///
 	/// Destructor.
 	///
-	virtual ~TMonitor( void );
+	virtual ~TMonitor(void);
 
 	///
 	/// Draw screen.
 	/// Return true if the screen was erased.
 	///
-	Boolean		DrawScreen( void );
+	virtual Boolean DrawScreen();
 
 	///
 	/// Determine if the machine is halted.
 	///
-	Boolean		IsHalted( void ) const
-		{
-			return mHalted;
-		}
+	Boolean
+	IsHalted(void) const
+	{
+		return mHalted;
+	}
+
+	///
+	/// Was the last screen update showing the "Halted..." screen?
+	///
+	Boolean
+	IsLastScreenHalted() const
+	{
+		return mLastScreenHalted;
+	}
+
+	///
+	/// Was the last screen update showing the "Halted..." screen?
+	///
+	void
+	SetLastScreenHalted(Boolean v)
+	{
+		mLastScreenHalted = v;
+	}
 
 	///
 	/// Monitor loop.
 	///
-	void		Run( void );
+	void Run(void);
 
 	///
 	/// Exit from monitor loop.
 	///
-	void		Stop( void );
+	void Stop(void);
 
 	///
 	/// Print help for the available commands.
 	///
-	void		PrintHelp( void );
-	
+	void PrintHelp(void);
+
 	///
 	/// Print help for the log commands.
 	///
-	void		PrintLoggingHelp( void );
-	
+	void PrintLoggingHelp(void);
+
 	///
 	/// Print help for the script commands.
 	///
-	void		PrintScriptingHelp( void );
-	
+	void PrintScriptingHelp(void);
+
 	///
 	/// Print help for the watchpoint commands.
 	///
-	void		PrintWatchpointHelp( void );
-	
+	void PrintWatchpointHelp(void);
+
 	///
 	/// Output a line.
 	///
-	virtual void		PrintLine( const char* inLine, int type )
-		{
-			mLog->LogLine( inLine );
-		}
+	virtual void
+	PrintLine(const char* inLine, int type)
+	{
+		(void) type;
+		mLog->LogLine(inLine);
+	}
 
+#if TARGET_UI_FLTK
+	// no support for signaling yet
+#else
 	///
 	/// Get monitor socket (notified of state changes).
 	///
-	int			GetMonitorSocket( void ) const
-		{
-			return mSocketPair[0];
-		}
-	
+	int
+	GetMonitorSocket(void) const
+	{
+		return mSocketPair[0];
+	}
+#endif
+
 	///
 	/// Execute startup script.
 	///
 	/// \return true if /ROMPath/monitorrc was found and run.
 	///
-	Boolean		ExecuteStartupScript();
-	
+	Boolean ExecuteStartupScript();
+
 	///
 	/// Execute a command.
 	///
 	/// \return true if the command was known.
 	///
-	Boolean		ExecuteCommand( const char* inCommand );
-	
+	Boolean ExecuteCommand(const char* inCommand);
+
 	///
 	/// Execute the help command.
 	///
 	/// \return true if the command was known.
 	///
-	Boolean		ExecuteHelpCommand( const char* inCommand );
-	
+	Boolean ExecuteHelpCommand(const char* inCommand);
+
 	///
 	/// Save the current state of the Emulator to a file.
 	///
-	void		SaveEmulatorState( const char *inFilename=0L );
-	
+	void SaveEmulatorState(const char* inFilename = 0L);
+
 	///
 	/// Read the current emulator state from a file.
 	///
-	void		LoadEmulatorState( const char *inFilename=0L );
-	
+	void LoadEmulatorState(const char* inFilename = 0L);
+
 	///
 	/// Save the current state of the Emulator to a file.
 	///
-	void		SnapEmulatorState( const char *inFilename=0L );
-	
+	void SnapEmulatorState(const char* inFilename = 0L);
+
 	///
 	/// Read the current emulator state from a file.
 	///
-	void		RevertEmulatorState( const char *inFilename=0L );
-	
+	void RevertEmulatorState(const char* inFilename = 0L);
+
+	///
+	/// Run the emulator as soon as we run the monitor
+	///
+	void
+	RunOnStartup(bool inRun)
+	{
+		mRunOnStartup = inRun;
+	}
+
+	///
+	/// Show the Monitor window
+	///
+	virtual void
+	Show()
+	{
+	}
+
+	///
+	/// Hide the Monitor window
+	///
+	virtual void
+	Hide()
+	{
+	}
+
 protected:
 	/// Constants.
 	static const char* kEraseLine;
 	static const char* const kRegisterNames[16];
 	static const char* const kModesNames[32];
-	
+
 	enum ECommand {
 		kNop,
 		kRun,
@@ -176,52 +230,73 @@ protected:
 		kSaveState,
 		kLoadState
 	};
-	
+
 	enum {
-		kPermanentBP	= 0,
-		kTemporaryBP	= 1,
-		kWatch0BP		= 2,
-		kWatch1BP		= 3,
-		kWatch2BP		= 4,
-		kWatch3BP		= 5
+		kPermanentBP = 0,
+		kTemporaryBP = 1,
+		kWatch0BP = 2,
+		kWatch1BP = 3,
+		kWatch2BP = 4,
+		kWatch3BP = 5
 	};
 
 	///
 	/// Draw screen when the emulator is halted.
 	///
-	void		DrawScreenHalted( void );
+	void DrawScreenHalted(void);
 
 	///
 	/// Draw screen when the emulator is running.
 	///
-	void		DrawScreenRunning( void );
+	void DrawScreenRunning(void);
 
 	///
 	/// Output current instruction (to the log).
 	///
-	void		PrintCurrentInstruction( void );
+	void PrintCurrentInstruction(void);
 
 	///
 	/// Output instruction at a given address.
 	///
-	void		PrintInstruction( KUInt32 inAddr );
-	
+	void PrintInstruction(KUInt32 inAddr);
+
 	///
 	/// Output the contents of the current stack.
 	///
-	void		PrintBacktrace(KSInt32 inNWords=0);
-	
-public:
-	///
-	/// Run the emulator (handle breakpoint if we're on a BP).
-	///
-	void		RunEmulator( void );
+	void PrintBacktrace(KSInt32 inNWords = 0);
 
 	///
-	/// Step the emulator (handle breakpoint if we're on a BP).
+	/// Display a NS reference
 	///
-	void		StepEmulator( void );
-	
+	void PrintNSRef(KUInt32 inRef);
+
+	///
+	/// Accessor on interrupt manager.
+	///
+	inline TInterruptManager*
+	GetInterruptManager() const
+	{
+		return mInterruptManager;
+	}
+
+	///
+	/// Accessor on processor.
+	///
+	inline TARMProcessor*
+	GetProcessor() const
+	{
+		return mProcessor;
+	}
+
+	///
+	/// Accessor on Log
+	///
+	inline TBufferLog*
+	GetLog() const
+	{
+		return mLog;
+	}
+
 	///
 	/// Process a breakpoint.
 	///
@@ -229,77 +304,120 @@ public:
 	/// \param inBPAddr		address of the breakpoint.
 	/// \return true if the machine should be stopped.
 	///
-	virtual Boolean		ProcessBreakpoint( KUInt16 inBPID, KUInt32 inBPAddr );
+	virtual Boolean ProcessBreakpoint(KUInt16 inBPID, KUInt32 inBPAddr);
+
+	TEmulator*
+	GetEmulator()
+	{
+		return mEmulator;
+	}
+
+protected:
+	///
+	/// Run the emulator (handle breakpoint if we're on a BP).
+	///
+	void RunEmulator(void);
+
+	///
+	/// Step the emulator (handle breakpoint if we're on a BP).
+	///
+	void StepEmulator(void);
 
 	/// \name Platform threading primitives
 
 	///
 	/// Create the condition variable and the mutex.
 	///
-	void		CreateCondVarAndMutex( void );
+	void CreateCondVarAndMutex(void);
 
 	///
 	/// Delete the condition variable and the mutex.
 	///
-	void		DeleteCondVarAndMutex( void );
-	
+	void DeleteCondVarAndMutex(void);
+
 	///
 	/// Signal the condition varaible.
 	///
-	void		SignalCondVar( void );
+	void SignalCondVar(void);
 
 	///
 	/// Wait (forever) on the emulator condition varaible.
 	///
-	void		WaitOnCondVar( void );
+	void WaitOnCondVar(void);
 
 	///
 	/// Acquire the mutex.
 	///
-	void		AcquireMutex( void );
+	void AcquireMutex(void);
 
 	///
 	/// Release the mutex.
 	///
-	void		ReleaseMutex( void );
+	void ReleaseMutex(void);
 
+	enum {
+		kTagInteger,
+		kTagPointer,
+		kTagImmed,
+		kTagMagicPtr
+	};
+
+	///
+	/// Format an NS Ref, using snprintf
+	///
+	int FormatNSRef(char* buffer, size_t bufferSize, KUInt32 inRef, int ident, int maxDepth);
+
+	///
+	/// Format an NS frame.
+	///
+	int FormatNSFrame(char* buffer, size_t bufferSize, KUInt32 addr, unsigned int length, KUInt32 mapRef, int indent, int maxDepth);
+
+	///
+	/// Format an NS binary.
+	///
+	int FormatNSBinary(char* buffer, size_t bufferSize, KUInt32 addr, unsigned int length, KUInt32 classRef, int indent, int maxDepth);
+
+private:
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TMonitor( const TMonitor& inCopy );
+	TMonitor(const TMonitor& inCopy) = delete;
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TMonitor& operator = ( const TMonitor& inCopy );
+	TMonitor& operator=(const TMonitor& inCopy) = delete;
 
+protected:
 	/// \name Variables
-	TEmulator*				mEmulator;			///< Emulator.
-	TARMProcessor*			mProcessor;			///< CPU.
-	TInterruptManager*		mInterruptManager;	///< Interrupt manager.
-	TBufferLog*				mLog;				///< Interface to the log.
-	Boolean					mHalted;			///< If the emulator is halted.
-#if TARGET_OS_WIN32
-	// FIXME: we must still implement this
+	TEmulator* mEmulator { nullptr }; ///< Emulator.
+	TARMProcessor* mProcessor { nullptr }; ///< CPU.
+	TInterruptManager* mInterruptManager { nullptr }; ///< Interrupt manager.
+	TBufferLog* mLog { nullptr }; ///< Interface to the log.
+	Boolean mHalted { false }; ///< If the emulator is halted.
+	TCondVar* mCondVar { nullptr };
+	TMutex* mMutex { nullptr };
+	ECommand mCommand { kNop }; ///< Next command for the
+	///< monitor thread.
+	char* mFilename { nullptr }; ///< Argument for next command.
+#if TARGET_UI_FLTK
+	// no signaling between monitor and log yet
 #else
-	pthread_cond_t			mCondVar;			///< Condition variable
-	pthread_mutex_t			mMutex;				///< Mutex for the loop.
+	int mSocketPair[2] { -1, -1 }; ///< Socket pair for monitor state changes.
 #endif
-	ECommand				mCommand;			///< Next command for the
-												///< monitor thread.
-	char*					mFilename;			///< Argument for next command.
-	int						mSocketPair[2];		///< Socket pair for monitor
-												///< state changes.
-	Boolean					mLastScreenHalted;	///< If last screen was halted.
-	char*					mROMPath;			///< path to the ROM fle directory
+	Boolean mLastScreenHalted { true }; ///< If last screen was halted.
+	char* mMonitorStartupScriptPath { nullptr }; ///< path to monitor startup script file
+	char* mROMImageDir { nullptr }; /// < path to the ROM file directory
+
+	Boolean mRunOnStartup { false }; ///< Run the emulation as soon as the monitor starts
 };
 
 #endif
-		// _TMONITOR_H
+// _TMONITOR_H
 
 // ============================ //
 // All constants are variables. //

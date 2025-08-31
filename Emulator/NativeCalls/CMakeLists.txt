@@ -1,16 +1,33 @@
-# NativeCalls CMakeLists
+#
+# Add source files required to build Einstein.
+#
 
-file(GLOB headers *.h)
-file(GLOB sources *.cp)
+list ( APPEND cmake_sources
+	Emulator/NativeCalls/CMakeLists.txt
+)
 
-set_source_files_properties(${sources} PROPERTIES LANGUAGE CXX)
+list ( APPEND common_sources
+	Emulator/NativeCalls/TVirtualizedCalls.cpp
+	Emulator/NativeCalls/TVirtualizedCalls.h
+	Emulator/NativeCalls/TVirtualizedCallsPatches.cpp
+	Emulator/NativeCalls/TVirtualizedCallsPatches.h
+)
 
-add_library(nativecalls STATIC ${sources})
-target_include_directories(nativecalls PUBLIC
-    ../
-    ../JIT/
-    ../JIT/Generic/
-    ../../
-    )
-
-target_link_libraries(nativecalls k)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+	list (APPEND common_sources
+		Emulator/NativeCalls/TObjCBridgeCalls.mm
+		Emulator/NativeCalls/TObjCBridgeCalls.h
+	)
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "OpenBSD")
+	list (APPEND common_sources
+			Emulator/NativeCalls/NativeCallsDefines.h
+			Emulator/NativeCalls/TNativeCalls.cpp
+			Emulator/NativeCalls/TNativeCalls.h
+	)
+elseif (WIN32)
+	list (APPEND common_sources
+		Emulator/NativeCalls/NativeCallsDefines.h
+		Emulator/NativeCalls/TNativeCalls.cpp
+		Emulator/NativeCalls/TNativeCalls.h
+	)
+endif ()

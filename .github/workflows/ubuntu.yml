@@ -1,0 +1,52 @@
+name: CI Ubuntu
+
+on:
+  workflow_dispatch:
+#on:
+#  push:
+#    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get dependencies
+      run: |
+        sudo apt-get install -y libpulse-dev ninja-build libbsd-dev
+        wget --no-check-certificate -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo add-apt-repository 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main'
+        sudo apt-get update
+        sudo apt-get install clang-format
+        # FLTK dependencies:
+        sudo apt-get install libx11-dev
+        sudo apt-get install libglu1-mesa-dev
+        sudo apt-get install libxft-dev
+        sudo apt-get install libxcursor-dev
+        sudo apt-get install libasound2-dev
+        sudo apt-get install freeglut3-dev
+        sudo apt-get install libcairo2-dev
+        sudo apt-get install libfontconfig1-dev
+        sudo apt-get install libglew-dev
+        sudo apt-get install libjpeg-dev
+        sudo apt-get install libpng-dev
+        sudo apt-get install libxinerama-dev
+    - name: Get sources
+      uses: actions/checkout@v4
+    - name: Configure Einstein
+      run: |
+        cmake -S . -B _Build_/Makefiles
+    - name: Check format
+      run: |
+        cmake --build _Build_/Makefiles --target clang-format-check
+    - name: Compile Einstein
+      run: |
+        cmake --build _Build_/Makefiles
+    - name: Run tests
+      run: |
+        _Build_/Makefiles/EinsteinTests

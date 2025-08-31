@@ -34,11 +34,10 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 151 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TFlatROMImageWithREX
-	:
-		public TROMImage
+		: public TROMImage
 {
 public:
 	///
@@ -48,21 +47,17 @@ public:
 	/// \param inREXPath	path to the REX file.
 	/// \param inMachineString	machine string.
 	///
-	TFlatROMImageWithREX(
-					const char* inROMPath,
-					const char* inREXPath,
-					const char inMachineString[6],
-					Boolean inMonitorMode = false,
-                             const char *inImagePath = 0);
+	TFlatROMImageWithREX(const char* inROMPath,
+		const char* inREXPath);
 
 	///
 	/// Destructor.
 	///
-	~TFlatROMImageWithREX( void );
+	~TFlatROMImageWithREX(void);
 };
 
 #endif
-		// _TFLATROMIMAGEWITHREX_H
+// _TFLATROMIMAGEWITHREX_H
 
 // ================================ //
 // One picture is worth 128K words. //

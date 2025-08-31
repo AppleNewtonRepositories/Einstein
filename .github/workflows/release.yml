@@ -1,0 +1,238 @@
+#
+# This script will tag the repo, compile and zip Einstein, and publish it
+# as a GitHub Release.
+#
+
+
+name: 'Deploy Einstein on GitHub'
+
+# This job must be called explicitly form the 'Actions' tab in GitHub
+on:
+  workflow_dispatch:
+    inputs:
+      # The Version Tag is extracted from CMakeLists.txt
+      #version_tag:
+      #  description: 'Release Version Tag'
+      #  required: true
+      #  default: '2024.4.21'
+      build-macos-universal-fltk:
+        type: boolean
+        description: Build macOS Universal FLTK
+        default: 'true'
+      build-linux-x64-fltk:
+        type: boolean
+        description: Build Linux x64 FLTK
+        default: 'true'
+      build-windows-x64-fltk:
+        type: boolean
+        description: Build Windows x64 FLTK
+        default: 'true'
+      build-windows-arm64-fltk:
+        type: boolean
+        description: Build Windows arm64 FLTK
+        default: 'true'
+      build-macos-universal-cocoa:
+        type: boolean
+        description: Build macOS Universal Cocoa
+        default: 'true'
+      # build-android
+      # build-iOS
+
+# Windows cmake build option for arm64 is -A ARM64
+# On Linux, we will have to do additional installs and set a bunch of environment variables
+
+jobs:
+
+  # Build the MacOS FLTK version as a Universal Binary for x64 and ARM64
+  build-macos-universal-fltk:
+    runs-on: macos-latest
+    if: ${{ github.event.inputs.build-macos-universal-fltk == 'true' }}
+    steps:
+    - name: Get Einstein Sources
+      uses: actions/checkout@v4
+    - name: Get Release Version Tag
+      run: |
+        export RELEASE_TAG="v"`grep -o '"Einstein" VERSION "[^"]*' CMakeLists.txt  | grep -o '[^"]*$'`
+        echo "RELEASE_TAG=$RELEASE_TAG"
+        echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
+    - name: Compile Einstein
+      run: |
+        cmake -S . -B build \
+                      -D CMAKE_BUILD_TYPE=Release \
+                      -D CMAKE_OSX_DEPLOYMENT_TARGET=10.13 \
+                      -D "CMAKE_OSX_ARCHITECTURES=arm64;x86_64"
+        cmake --build build --target Einstein
+    - name: Pack Einstein
+      run: |
+        mv build/Einstein.app .
+        cmake -E tar cf Einstein_macOS_universal_fltk_${{env.RELEASE_TAG}}.zip --format=zip Einstein.app
+    - name: Publish Einstein
+      uses: ncipollo/release-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        allowUpdates: 'true'
+        artifacts: Einstein_macOS_universal_fltk_${{env.RELEASE_TAG}}.zip
+        artifactContentType: application/zip
+        bodyFile: ReleaseText.md
+        tag: ${{ env.RELEASE_TAG }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux-x64-fltk:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.build-linux-x64-fltk == 'true' }}
+    steps:
+    - name: Get dependencies
+      run: |
+        sudo apt-get install -y libpulse-dev ninja-build libbsd-dev
+        wget --no-check-certificate -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo add-apt-repository 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main'
+        sudo apt-get update
+        sudo apt-get install clang-format
+        # FLTK dependencies:
+        sudo apt-get install libx11-dev
+        sudo apt-get install libglu1-mesa-dev
+        sudo apt-get install libxft-dev
+        sudo apt-get install libxcursor-dev
+        sudo apt-get install libasound2-dev
+        sudo apt-get install freeglut3-dev
+        sudo apt-get install libcairo2-dev
+        sudo apt-get install libfontconfig1-dev
+        sudo apt-get install libglew-dev
+        sudo apt-get install libjpeg-dev
+        sudo apt-get install libpng-dev
+        sudo apt-get install libxinerama-dev
+        # FLTK Wayland dependencies:
+        sudo apt-get install libpango1.0-dev
+        sudo apt-get install libwayland-dev
+        sudo apt-get install wayland-protocols
+        sudo apt-get install libxkbcommon-dev
+        sudo apt-get install libdbus-1-dev
+        sudo apt-get install libdecor-0-dev
+        sudo apt-get install libgtk-3-dev
+    - name: Get sources
+      uses: actions/checkout@v4
+    - name: Get Version
+      run: |
+        export RELEASE_TAG="v"`grep -o '"Einstein" VERSION "[^"]*' CMakeLists.txt  | grep -o '[^"]*$'`
+        echo "RELEASE_TAG=$RELEASE_TAG"
+        echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
+    - name: Compile Einstein
+      run: |
+        cmake -S . -B build -D CMAKE_BUILD_TYPE=Release
+        cmake --build build --target Einstein
+    - name: Pack Einstein
+      run: |
+        mv build/Einstein .
+        cmake -E tar cf Einstein_linux_x64_fltk_${{env.RELEASE_TAG}}.zip --format=zip Einstein
+    - name: Publish Einstein
+      uses: ncipollo/release-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        allowUpdates: 'true'
+        artifacts: Einstein_linux_x64_fltk_${{env.RELEASE_TAG}}.zip
+        artifactContentType: application/zip
+        bodyFile: ReleaseText.md
+        tag: ${{ env.RELEASE_TAG }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows-x64-fltk:
+    runs-on: windows-latest
+    if: ${{ github.event.inputs.build-windows-x64-fltk == 'true' }}
+    steps:
+    - name: Get sources
+      uses: actions/checkout@v4
+    - name: Get Version
+      shell: pwsh
+      run: |
+        # Select-String -Path CMakeLists.txt -CaseSensitive -Pattern '"Einstein" VERSION'
+        $env:RELEASE_TAG2=(Select-String -Path CMakeLists.txt -CaseSensitive -Pattern '"Einstein" VERSION')
+        # gci env:RELEASE_TAG2
+        $env:RELEASE_TAG=($env:RELEASE_TAG2 -replace '.* VERSION "', '' -replace '".*\)', '')
+        # gci env:RELEASE_TAG
+        echo "RELEASE_TAG=v$env:RELEASE_TAG"
+        echo "RELEASE_TAG=v$env:RELEASE_TAG" >> $env:GITHUB_ENV
+    - name: Compile Einstein
+      run: |
+        cmake -S . -B build -A x64 -D CMAKE_BUILD_TYPE=Release
+        cmake --build build --config Release --target Einstein
+    - name: Pack Einstein
+      run: |
+        mv build/Release/Einstein.exe .
+        cmake -E tar cf Einstein_windows_x64_fltk_${{env.RELEASE_TAG}}.zip --format=zip Einstein.exe
+    - uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: 'true'
+        artifacts: Einstein_windows_x64_fltk_${{env.RELEASE_TAG}}.zip
+        artifactContentType: application/zip
+        bodyFile: ReleaseText.md
+        tag: ${{ env.RELEASE_TAG }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows-arm64-fltk:
+    # Currently fails after creating newt64.lib, no error message
+    runs-on: windows-latest
+    if: ${{ github.event.inputs.build-windows-arm64-fltk == 'true' }}
+    steps:
+    - name: Get sources
+      uses: actions/checkout@v4
+    - name: Get Version
+      shell: pwsh
+      run: |
+        # Select-String -Path CMakeLists.txt -CaseSensitive -Pattern '"Einstein" VERSION'
+        $env:RELEASE_TAG2=(Select-String -Path CMakeLists.txt -CaseSensitive -Pattern '"Einstein" VERSION')
+        # gci env:RELEASE_TAG2
+        $env:RELEASE_TAG=($env:RELEASE_TAG2 -replace '.* VERSION "', '' -replace '".*\)', '')
+        # gci env:RELEASE_TAG
+        echo "RELEASE_TAG=v$env:RELEASE_TAG"
+        echo "RELEASE_TAG=v$env:RELEASE_TAG" >> $env:GITHUB_ENV
+    - name: Compile Einstein
+      run: |
+        cmake -S . -B build -A ARM64 -D CMAKE_BUILD_TYPE=Release
+        cmake --build build --config Release --target Einstein
+    - name: Pack Einstein
+      run: |
+        mv build/Release/Einstein.exe .
+        cmake -E tar cf Einstein_windows_arm64_fltk_${{env.RELEASE_TAG}}.zip --format=zip Einstein.exe
+    - uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: 'true'
+        artifacts: Einstein_windows_arm64_fltk_${{env.RELEASE_TAG}}.zip
+        artifactContentType: application/zip
+        bodyFile: ReleaseText.md
+        tag: ${{ env.RELEASE_TAG }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-macos-universal-cocoa:
+    runs-on: macos-latest
+    if: ${{ github.event.inputs.build-macos-universal-cocoa == 'true' }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Get Release Version Tag
+      run: |
+        export RELEASE_TAG="v"`grep -o '"Einstein" VERSION "[^"]*' CMakeLists.txt  | grep -o '[^"]*$'`
+        echo "RELEASE_TAG=$RELEASE_TAG"
+        echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
+    - name: Build
+      run: |
+        xcodebuild archive \
+          -project _Build_/Xcode/Einstein.xcodeproj \
+          -scheme Einstein -configuration Release \
+          -archivePath Einstein.xcarchive \
+          ONLY_ACTIVE_ARCH=NO
+    - name: Pack Einstein
+      run: |
+        mv Einstein.xcarchive/Products/Applications/Einstein.app .
+        cmake -E tar cf Einstein_macOS_universal_cocoa_${{env.RELEASE_TAG}}.zip --format=zip Einstein.app
+    - name: Publish Einstein
+      uses: ncipollo/release-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        allowUpdates: 'true'
+        artifacts: Einstein_macOS_universal_cocoa_${{env.RELEASE_TAG}}.zip
+        artifactContentType: application/zip
+        bodyFile: ReleaseText.md
+        tag: ${{ env.RELEASE_TAG }}
+        token: ${{ secrets.GITHUB_TOKEN }}

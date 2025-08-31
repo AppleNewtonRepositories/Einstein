@@ -38,23 +38,23 @@ class TEmulator;
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 107 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TDMAManager
 {
 public:
 	/// Channel numbers.
 	enum {
-		kSerialPort0Receive			= 0,
-		kSerialPort0Transmit		= 1,
-		kInfraredReceiveAndTransmit	= 2,
-		kAudioTransmit				= 3,
-		kAudioReceive				= 4,
-		kTabletDigitizerReceive		= 5,
-		kSerialPort3Receive			= 6,
-		kSerialPort3Transmit		= 7
+		kSerialPort0Receive = 0,
+		kSerialPort0Transmit = 1,
+		kInfraredReceiveAndTransmit = 2,
+		kAudioTransmit = 3,
+		kAudioReceive = 4,
+		kTabletDigitizerReceive = 5,
+		kSerialPort3Receive = 6,
+		kSerialPort3Transmit = 7
 	};
-	
+
 	///
 	/// Constructor from the memory and the interrupt manager.
 	///
@@ -62,26 +62,26 @@ public:
 		TLog* inLog,
 		TEmulator* inEmulator,
 		TMemory* inMemory,
-		TInterruptManager* inInterruptManager );
+		TInterruptManager* inInterruptManager);
 
 	///
 	/// Destructor.
 	///
-	~TDMAManager( void );
+	~TDMAManager(void);
 
 	///
 	/// Read the channel assignment register.
 	///
 	/// \return the value of the channel assignment register.
 	///
-	KUInt32	ReadChannelAssignmentRegister( void );
+	KUInt32 ReadChannelAssignmentRegister(void);
 
 	///
 	/// Write the channel assignment register.
 	///
 	/// \param inValue	value to write to the channel assignment register.
 	///
-	void	WriteChannelAssignmentRegister( KUInt32 inValue );
+	void WriteChannelAssignmentRegister(KUInt32 inValue);
 
 	///
 	/// Write the enable register.
@@ -89,7 +89,7 @@ public:
 	///
 	/// \param inValue	value to write to the enable register.
 	///
-	void	WriteEnableRegister( KUInt32 inValue );
+	void WriteEnableRegister(KUInt32 inValue);
 
 	///
 	/// Read the status register.
@@ -97,7 +97,7 @@ public:
 	///
 	/// \return the value of the status register.
 	///
-	KUInt32	ReadStatusRegister( void );
+	KUInt32 ReadStatusRegister(void);
 
 	///
 	/// Write the disable register.
@@ -105,7 +105,7 @@ public:
 	///
 	/// \param inValue	value to write to the disable register.
 	///
-	void	WriteDisableRegister( KUInt32 inValue );
+	void WriteDisableRegister(KUInt32 inValue);
 
 	///
 	/// Read the word status register.
@@ -113,8 +113,8 @@ public:
 	///
 	/// \return the value of the word status register.
 	///
-	KUInt32	ReadWordStatusRegister( void );
-	
+	KUInt32 ReadWordStatusRegister(void);
+
 	///
 	/// Read a channel register from first bank.
 	///
@@ -122,8 +122,8 @@ public:
 	/// \param inRegister	id of the register
 	/// \return the value of the register.
 	///
-	KUInt32	ReadChannel1Register( KUInt32 inChannel, KUInt32 inRegister );
-	
+	KUInt32 ReadChannel1Register(KUInt32 inChannel, KUInt32 inRegister);
+
 	///
 	/// Write a channel register in first bank.
 	///
@@ -132,11 +132,11 @@ public:
 	/// \param inValue		word to write to the register.
 	/// \return the value of the register.
 	///
-	void	WriteChannel1Register(
-					KUInt32 inChannel,
-					KUInt32 inRegister,
-					KUInt32 inValue );
-	
+	void WriteChannel1Register(
+		KUInt32 inChannel,
+		KUInt32 inRegister,
+		KUInt32 inValue);
+
 	///
 	/// Read a channel register from second bank.
 	///
@@ -144,7 +144,7 @@ public:
 	/// \param inRegister	id of the register
 	/// \return the value of the register.
 	///
-	KUInt32	ReadChannel2Register( KUInt32 inChannel, KUInt32 inRegister );
+	KUInt32 ReadChannel2Register(KUInt32 inChannel, KUInt32 inRegister);
 
 	///
 	/// Write a channel register in second bank.
@@ -154,42 +154,42 @@ public:
 	/// \param inValue		word to write to the register.
 	/// \return the value of the register.
 	///
-	void	WriteChannel2Register(
-					KUInt32 inChannel,
-					KUInt32 inRegister,
-					KUInt32 inValue );
+	void WriteChannel2Register(
+		KUInt32 inChannel,
+		KUInt32 inRegister,
+		KUInt32 inValue);
 
 	///
 	/// Save or restore the state to or from a file.
 	///
-	void		TransferState( TStream* inStream );
+	void TransferState(TStream* inStream);
 
 private:
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TDMAManager( const TDMAManager& inCopy );
+	TDMAManager(const TDMAManager& inCopy);
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TDMAManager& operator = ( const TDMAManager& inCopy );
+	TDMAManager& operator=(const TDMAManager& inCopy);
 
 	/// \name Variables
-	TLog*				mLog;				///< Interface for logging.
-	TMemory*			mMemory;			///< Reference on the memory.
-	TInterruptManager*	mInterruptManager;	///< Reference on the interrupt mgr.
-	TEmulator*			mMemulator;			///< Reference the emulator
-	
-	KUInt32				mAssignmentReg;		///< Assignment register.
+	TLog* mLog; ///< Interface for logging.
+	TMemory* mMemory; ///< Reference on the memory.
+	TInterruptManager* mInterruptManager; ///< Reference on the interrupt mgr.
+	TEmulator* mEmulator; ///< Reference the emulator
+
+	KUInt32 mAssignmentReg; ///< Assignment register.
 };
 
 #endif
-		// _TDMAMANAGER_H
+// _TDMAMANAGER_H
 
 // ========================== //
 // Memory fault - where am I? //

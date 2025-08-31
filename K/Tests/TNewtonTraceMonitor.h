@@ -2,7 +2,7 @@
 // Fichier:			TNewtonTraceMonitor.h
 // Projet:			K
 //
-// Créé le:			08/09/2002
+// Cr√©√© le:			08/09/2002
 // Tabulation:		4 espaces
 //
 // ***** BEGIN LICENSE BLOCK *****
@@ -34,54 +34,53 @@
 #define __TNEWTONTRACEMONITOR__
 
 #include <K/Defines/KDefinitions.h>
-#include <K/Tests/TTraceMonitor.h>
 #include <K/Misc/TNameServerSingleton.h>
+#include <K/Tests/TTraceMonitor.h>
 
 ///
 /// Classe pour afficher la trace sur NewtonOS.
-/// Le singleton est enregistré auprès du serveur de nom.
+/// Le singleton est enregistr√© aupr√®s du serveur de nom.
 ///
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version 1.0
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TNewtonTraceMonitor
-				:
-					public TTraceMonitor,
-					public TNameServerSingleton
+		: public TTraceMonitor,
+		  public TNameServerSingleton
 {
 public:
 	///
-	/// Récupère le singleton. Le crée si nécessaire.
+	/// R√©cup√®re le singleton. Le cr√©e si n√©cessaire.
 	///
-	/// \param	inMode	mode à utiliser. Les bits sont définis dans EMode.
+	/// \param	inMode	mode √† utiliser. Les bits sont d√©finis dans EMode.
 	///
-	static TNewtonTraceMonitor* GetTraceMonitor( unsigned int inMode );
+	static TNewtonTraceMonitor* GetTraceMonitor(unsigned int inMode);
 
 	///
 	/// Supprime le singleton s'il existe.
 	///
-	static void RemoveTraceMonitor( void );
+	static void RemoveTraceMonitor(void);
 
 private:
 	///
-	/// Constructeur à partir d'un entier représentant le mode.
+	/// Constructeur √† partir d'un entier repr√©sentant le mode.
 	///
-	/// \param	inMode	mode à utiliser. Les bits sont définis dans EMode.
+	/// \param	inMode	mode √† utiliser. Les bits sont d√©finis dans EMode.
 	///
-	TNewtonTraceMonitor( unsigned int inMode );
+	TNewtonTraceMonitor(unsigned int inMode);
 
 	///
 	/// Destructeur.
 	///
-	virtual ~TNewtonTraceMonitor( void );
-	
-	static const char* const	kName;			///< constante pour le serveur de noms
+	virtual ~TNewtonTraceMonitor(void);
+
+	static const char* const kName; ///< constante pour le serveur de noms
 };
 
 #endif
-		// __TNEWTONTRACEMONITOR__
+// __TNEWTONTRACEMONITOR__
 
 // =============================================================================== //
 // Real Programmers don't write in FORTRAN.  FORTRAN is for pipe stress freaks and //

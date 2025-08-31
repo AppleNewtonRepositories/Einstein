@@ -2,7 +2,7 @@
 // Fichier:			UUTF16CStr.h
 // Projet:			K
 //
-// Créé le:			14/01/2002
+// Cr√©√© le:			14/01/2002
 // Tabulation:		4 espaces
 //
 // ***** BEGIN LICENSE BLOCK *****
@@ -36,7 +36,7 @@
 #include <K/Unicode/UnicodeDefinitions.h>
 
 // ================================================ //
-//   ••••• Definition for class UUTF16CStr •••••    //
+//   ‚Ä¢‚Ä¢‚Ä¢‚Ä¢‚Ä¢ Definition for class UUTF16CStr ‚Ä¢‚Ä¢‚Ä¢‚Ä¢‚Ä¢    //
 // ================================================ //
 
 // UTF-16 to/from another charset converter of CStrings.
@@ -61,91 +61,80 @@ class UUTF16CStr
 {
 public:
 	static void ToISO88591(
-		const KUInt16*	inInputCString,
-		KUInt8*			outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
+		const KUInt16* inInputCString,
+		KUInt8* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
 	static void FromISO88591(
-		const KUInt8*	inInputCString,
-		KUInt16*		outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
-	
+		const KUInt8* inInputCString,
+		KUInt16* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
+
 	static void ToISO88592(
-		const KUInt16*	inInputCString,
-		KUInt8*			outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
+		const KUInt16* inInputCString,
+		KUInt8* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
 	static void FromISO88592(
-		const KUInt8*	inInputCString,
-		KUInt16*		outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
-	
+		const KUInt8* inInputCString,
+		KUInt16* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
+
 	static void ToASCII(
-		const KUInt16*	inInputCString,
-		KUInt8*			outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
+		const KUInt16* inInputCString,
+		KUInt8* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
 	static void FromASCII(
-		const KUInt8*	inInputCString,
-		KUInt16*		outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
-	
+		const KUInt8* inInputCString,
+		KUInt16* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
+
 	static void ToMacRoman(
-		const KUInt16*	inInputCString,
-		KUInt8*			outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
+		const KUInt16* inInputCString,
+		KUInt8* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
 	static void FromMacRoman(
-		const KUInt8*	inInputCString,
-		KUInt16*		outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
+		const KUInt8* inInputCString,
+		KUInt16* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
 
 	static void ToUCS4(
-		const KUInt16*	inInputCString,
-		KUInt32*		outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
-//	static void FromUCS4(
-//		const KUInt32*	inInputCString,
-//		KUInt16*		outOutputCString,
-//		size_t			inLimit = 0,
-//		size_t*			outStringSize = nil
-//		);
+		const KUInt16* inInputCString,
+		KUInt32* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
+	//	static void FromUCS4(
+	//		const KUInt32*	inInputCString,
+	//		KUInt16*		outOutputCString,
+	//		size_t			inLimit = 0,
+	//		size_t*			outStringSize = nil
+	//		);
 	static void ToUTF8(
-		const KUInt16*	inInputCString,
-		KUInt8*			outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
+		const KUInt16* inInputCString,
+		KUInt8* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
 	static void FromUTF8(
-		const KUInt8*	inInputCString,
-		KUInt16*		outOutputCString,
-		size_t			inLimit = 0,
-		size_t*			outStringSize = nil
-		);
+		const KUInt8* inInputCString,
+		KUInt16* outOutputCString,
+		size_t inLimit = 0,
+		size_t* outStringSize = nil);
 
 	// Return the size of the CStrings minus the null terminator.
 	// (just like ANSI C strlen).
-	static size_t StrLen( const KUInt32* inCString );
-	static size_t StrLen( const KUInt16* inCString );
-	static size_t StrLen( const KUInt8* inCString );
+	static size_t StrLen(const KUInt32* inCString);
+	static size_t StrLen(const KUInt16* inCString);
+	static size_t StrLen(const KUInt8* inCString);
 };
 
 #endif
-		// __UUTF16CSTR__
+// __UUTF16CSTR__
 
 // ================================================= //
 //     *** System shutdown message from root *** //

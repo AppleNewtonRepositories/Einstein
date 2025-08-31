@@ -2,32 +2,32 @@
 // Fichier:			TCircleBuffer.h
 // Projet:			K
 // Ecrit par:		Paul Guyot (pguyot@kallisys.net)
-// 
-// Créé le:			26/5/2005
+//
+// Cr√©√© le:			26/5/2005
 // Tabulation:		4 espaces
-// 
+//
 // ***** BEGIN LICENSE BLOCK *****
 // Version: MPL 1.1
-// 
+//
 // The contents of this file are subject to the Mozilla Public License Version
 // 1.1 (the "License"); you may not use this file except in compliance with
 // the License. You may obtain a copy of the License at
 // http://www.mozilla.org/MPL/
-// 
+//
 // Software distributed under the License is distributed on an "AS IS" basis,
 // WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the
 // License.
-// 
+//
 // The Original Code is TCircleBuffer.h.
-// 
+//
 // The Initial Developer of the Original Code is Paul Guyot.
 // Portions created by the Initial Developer are Copyright (C) 2005 the
 // Initial Developer. All Rights Reserved.
-// 
+//
 // Contributor(s):
 //   Paul Guyot <pguyot@kallisys.net> (original author)
-// 
+//
 // ***** END LICENSE BLOCK *****
 // ===========
 // $Id: TCircleBuffer.h,v 1.2 2005/05/27 01:52:08 pguyot Exp $
@@ -45,7 +45,7 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 1.2 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TCircleBuffer
 {
@@ -53,12 +53,12 @@ public:
 	///
 	/// Constructor from an initial capacity.
 	///
-	TCircleBuffer( KUIntPtr inInitialCapacity = 0 );
+	TCircleBuffer(KUIntPtr inInitialCapacity = 0);
 
 	///
 	/// Destructor.
 	///
-	~TCircleBuffer( void );
+	~TCircleBuffer(void);
 
 	///
 	/// Copy data for the producer.
@@ -66,7 +66,7 @@ public:
 	/// \param inBuffer		where to read data.
 	/// \param inAmount		number of bytes to produce.
 	///
-	void		Produce( const void* inBuffer, KUIntPtr inAmount );
+	void Produce(const void* inBuffer, KUIntPtr inAmount);
 
 	///
 	/// Copy data for the consumer.
@@ -75,49 +75,50 @@ public:
 	/// \param inAmount		number of bytes to consume.
 	/// \return the number of bytes actually consumed.
 	///
-	KUIntPtr	Consume( void* outBuffer, KUIntPtr inAmount );
+	KUIntPtr Consume(void* outBuffer, KUIntPtr inAmount);
 
 	///
 	/// Determine if the buffer is empty.
 	///
 	/// \return \c true if the buffer is empty, false otherwise.
 	///
-	inline Boolean		IsEmpty( void ) const
-		{
-			return mProducerCrsr == mConsumerCrsr;
-		}
-	
+	inline Boolean
+	IsEmpty(void) const
+	{
+		return mProducerCrsr == mConsumerCrsr;
+	}
+
 	///
 	/// Determine the number of bytes availbe for consumption.
 	///
 	/// \return number of bytes available
 	///
 	KUIntPtr AvailableBytes();
-	
+
 private:
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TCircleBuffer( const TCircleBuffer& inCopy );
+	TCircleBuffer(const TCircleBuffer& inCopy);
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TCircleBuffer& operator = ( const TCircleBuffer& inCopy );
+	TCircleBuffer& operator=(const TCircleBuffer& inCopy);
 
 	/// \name Variables
-	KUInt8*					mBuffer;		///< Where data is hold.
-	KUIntPtr				mProducerCrsr;	///< Producer cursor.
-	KUIntPtr				mConsumerCrsr;	///< Consumer cursor.
-	KUIntPtr				mBufferSize;	///< Size of the buffer.
+	KUInt8* mBuffer; ///< Where data is hold.
+	KUIntPtr mProducerCrsr; ///< Producer cursor.
+	KUIntPtr mConsumerCrsr; ///< Consumer cursor.
+	KUIntPtr mBufferSize; ///< Size of the buffer.
 };
 
 #endif
-		// _TCIRCLEBUFFER_H
+// _TCIRCLEBUFFER_H
 
 // ============================================================================== //
 //         One of the questions that comes up all the time is: How enthusiastic   //

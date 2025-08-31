@@ -110,9 +110,6 @@
 /// On a aussi KDebugOn qui détermine si on veut du déverminage.
 /// Par défaut à 1 sauf si NDEBUG vaut 1.
 
-///\def HAS_C99_LONGLONG
-/// Macro qui vaut \c 1 si on a l'extension C99 long long, \c 0 sinon.
-
 ///\def HAS_C99_SNPRINTF
 ///	Macro qui vaut \c 1 si on a l'extension C99 snprintf, \c 0 sinon.
 
@@ -120,579 +117,472 @@
 
 #define HAS_EXCEPTION_HANDLING 1
 
-#if TARGET_OS_OPENSTEP_PPC
-	#define	TARGET_OS_OPENSTEP 1
+#if defined(TARGET_OS_OPENSTEP_PPC) && TARGET_OS_OPENSTEP_PPC
+#define TARGET_OS_OPENSTEP 1
 #endif
 
-#if TARGET_OS_OPENSTEP_I386
-        #define	TARGET_OS_OPENSTEP 1
+#if defined(TARGET_OS_OPENSTEP_I386) && TARGET_OS_OPENSTEP_I386
+#define TARGET_OS_OPENSTEP 1
 #endif
 
-#if TARGET_OS_OPENSTEP_ARM
-        #define	TARGET_OS_OPENSTEP 1
+#if defined(TARGET_OS_OPENSTEP_ARM) && TARGET_OS_OPENSTEP_ARM
+#define TARGET_OS_OPENSTEP 1
 #endif
 
-#if DARWIN
-    #define TARGET_OS_OPENSTEP 1
+#if defined(DARWIN) && DARWIN
+#define TARGET_OS_OPENSTEP 1
 #endif
 
-#if TARGET_OS_MACOS
-	#define TARGET_OS_MAC 1
-	#define TARGET_API_MAC_OS8 1
+#if defined(TARGET_OS_MACOS) && TARGET_OS_MACOS
+#define TARGET_OS_MAC 1
+#define TARGET_API_MAC_OS8 1
 #endif
 
-#if TARGET_OS_OPENSTEP
-	#define TARGET_OS_MAC 1
-	#define TARGET_API_MAC_CARBON 1
-	#define TARGET_API_MAC_OSX 1
-    #define TARGET_OS_COMPAT_POSIX 1
+#if defined(TARGET_OS_OPENSTEP) && TARGET_OS_OPENSTEP
+#define TARGET_OS_MAC 1
+#define TARGET_API_MAC_CARBON 1
+#define TARGET_API_MAC_OSX 1
+#define TARGET_OS_COMPAT_POSIX 1
 #endif
 
 #ifdef __MRC__
-	// Compilateur MrC[pp] d'Apple
-	#define TARGET_OS_MAC 1
-	// Parfois stupide
-	#define MPW_COMPILERS_WORKAROUND 1
+// Compilateur MrC[pp] d'Apple
+#define TARGET_OS_MAC 1
+// Parfois stupide
+#define MPW_COMPILERS_WORKAROUND 1
 #endif
 
 #if defined(__SC__) && (defined(MPW_CPLUS) || defined(MPW_C))
-	// Compilateur SC[pp] d'Apple
-	#define TARGET_OS_MAC 1
-	// Parfois stupide
-	#define MPW_COMPILERS_WORKAROUND 1
+// Compilateur SC[pp] d'Apple
+#define TARGET_OS_MAC 1
+// Parfois stupide
+#define MPW_COMPILERS_WORKAROUND 1
 #endif
 
 #ifdef __MWERKS__
-	// Les compilateurs Metrowerks ont cette fonction plutôt sympa.
-	#pragma	warn_resultnotused	on
-	
-	// On active l'optimisation du résultat.
-	// Cf: <hinnant-3969E3.10055518092003@syrcnyrdrs-03-ge0.nyroc.rr.com>
-	#pragma opt_classresults on
-	#if macintosh
-		// A priori, la cible est MacOS [X]
-		#ifndef TARGET_OS_MAC
-			#define TARGET_OS_MAC 1
-		#endif
-	#endif
+// Les compilateurs Metrowerks ont cette fonction plutôt sympa.
+#pragma warn_resultnotused on
+
+// On active l'optimisation du résultat.
+// Cf: <hinnant-3969E3.10055518092003@syrcnyrdrs-03-ge0.nyroc.rr.com>
+#pragma opt_classresults on
+#if macintosh
+// A priori, la cible est MacOS [X]
+#ifndef TARGET_OS_MAC
+#define TARGET_OS_MAC 1
+#endif
+#endif
 #endif
 
-#if TARGET_OS_NEWTON
-	#define TARGET_OS_BEOS 0
-	#define TARGET_OS_MACOS 0
-	#define TARGET_OS_OPENSTEP 0
-	#define TARGET_OS_POSIX 0
-	#define TARGET_OS_WIN32	0
-	#define TARGET_OS_CYGWIN 0
-	#ifdef TARGET_OS_MAC
-		#undef TARGET_OS_MAC
-	#endif
-	#define TARGET_OS_MAC 0
-	#define TARGET_OS_COMPAT_POSIX 0
-	#undef	TARGET_OS_UNDEFINED
-		
-	// Macro pour le compilateur ARM du Newton qui est particulièrement
-	// stupide.
-	#define ARMCPP 1
+#if defined(TARGET_OS_NEWTON) && TARGET_OS_NEWTON
+#define TARGET_OS_BEOS 0
+#define TARGET_OS_MACOS 0
+#define TARGET_OS_OPENSTEP 0
+#define TARGET_OS_POSIX 0
+#define TARGET_OS_WIN32 0
+#define TARGET_OS_CYGWIN 0
+#ifdef TARGET_OS_MAC
+#undef TARGET_OS_MAC
+#endif
+#define TARGET_OS_MAC 0
+#define TARGET_OS_COMPAT_POSIX 0
+#undef TARGET_OS_UNDEFINED
 
-	#include <Newton.h>
+// Macro pour le compilateur ARM du Newton qui est particulièrement
+// stupide.
+#define ARMCPP 1
 
-	typedef	unsigned long	KUInt32;
-	typedef	signed long		KSInt32;
-	typedef	unsigned short	KUInt16;
-	typedef	signed short	KSInt16;
-	typedef	signed char		KSInt8;
-	typedef unsigned char	KUInt8;
+#include <Newton.h>
 
-	#define TARGET_RT_LITTLE_ENDIAN 0
-	#define TARGET_RT_BIG_ENDIAN 1
-	#define FOUR_CHAR_CODE(x)		(x)
+#define TARGET_RT_LITTLE_ENDIAN 0
+#define TARGET_RT_BIG_ENDIAN 1
 
-	#ifndef HAS_C99_LONGLONG
-		#define HAS_C99_LONGLONG 0
-	#endif
-	
-	// La bibliothèque C n'a pas snprintf
-	#ifndef HAS_C99_SNPRINTF
-		#define HAS_C99_SNPRINTF 0
-	#endif
-
-	// Gestion des portées.
-	#ifndef HAS_NAMESPACES
-		#define HAS_NAMESPACES 0
-	#endif
-	
-	// void* est en 32 bits sur cette plateforme.
-	#define KUIntPtr			KUInt32
+// La bibliothèque C n'a pas snprintf
+#ifndef HAS_C99_SNPRINTF
+#define HAS_C99_SNPRINTF 0
 #endif
 
-#if TARGET_OS_MAC
-	#if TARGET_OS_MACOS
-		#include <ConditionalMacros.h>
-	#endif
-	#if TARGET_OS_OPENSTEP
-		#if __MWERKS__
-			#pragma warn_implicitconv off
-		#endif
+// Gestion des portées.
+#ifndef HAS_NAMESPACES
+#define HAS_NAMESPACES 0
+#endif
 
-                #if TARGET_IOS
-                        #import <CFNetwork/CFNetwork.h>
-                #else
-                        #import <CoreServices/CoreServices.h>
-                #endif
+#endif
 
-		#if __MWERKS__
-			#pragma warn_implicitconv reset
-		#endif
-	#endif
-	
-	#if TARGET_API_MAC_OSX
-		#define TARGET_OS_ANDROID 0
-		#define TARGET_OS_BEOS 0
-		#define TARGET_OS_BSD 0
-		#define TARGET_OS_LINUX 0
-		#define TARGET_OS_MACOS 0
-		#define TARGET_OS_NEWTON 0
-		#define TARGET_OS_OPENSTEP 1
-		#define TARGET_OS_POSIX 0
-		#define TARGET_OS_WIN32	0
-		#define TARGET_OS_CYGWIN 0
-		#define TARGET_OS_COMPAT_POSIX 1
-		#undef	TARGET_OS_UNDEFINED
-		
-		// MacOS X could be on x86 or on ppc
-		#if (defined (__ppc__) || defined (__ppc64__))
-			#define TARGET_OS_OPENSTEP_PPC 1
-                        #define TARGET_OS_OPENSTEP_I386 0
-                        #define TARGET_OS_OPENSTEP_ARM 0
-                #elif (defined (__i386__) || defined (__x86_64__))
-                        #define TARGET_OS_OPENSTEP_PPC 0
-                        #define TARGET_OS_OPENSTEP_I386 1
-                        #define TARGET_OS_OPENSTEP_ARM 0
-                #elif (defined (__arm__) || defined (__arm64__))
-                        #define TARGET_OS_OPENSTEP_PPC 0
-                        #define TARGET_OS_OPENSTEP_I386 0
-                        #define TARGET_OS_OPENSTEP_ARM 1
-                #else
-			#error "Unknown MacOS X architecture"
-		#endif
+#if defined(TARGET_OS_MAC) && TARGET_OS_MAC
+#if defined(TARGET_OS_MACOS) && TARGET_OS_MACOS
+#include <ConditionalMacros.h>
+#endif
+#if TARGET_OS_OPENSTEP
+#if __MWERKS__
+#pragma warn_implicitconv off
+#endif
+#ifdef __OBJC__
+#if TARGET_IOS
+#import <CFNetwork/CFNetwork.h>
+#else
+#import <CoreServices/CoreServices.h>
+#endif
+#else
+#include <MacTypes.h>
+#include <stdio.h>
+#endif
+#if __MWERKS__
+#pragma warn_implicitconv reset
+#endif
+#endif
 
-		#if (defined(__ppc64__) || defined (__x86_64__) || defined (__arm64__))
-			#define KUIntPtr	KUInt64
-		#else
-			#define KUIntPtr	KUInt32
-		#endif
-	#else
-		#define TARGET_OS_ANDROID 0
-		#define TARGET_OS_BEOS 0
-		#define TARGET_OS_BSD 0
-		#define TARGET_OS_LINUX 0
-		#define TARGET_OS_MACOS 1
-		#define TARGET_OS_NEWTON 0
-		#define TARGET_OS_OPENSTEP 0
-		#define TARGET_OS_POSIX 0
-		#define TARGET_OS_WIN32	0
-		#define TARGET_OS_CYGWIN 0
-		#define TARGET_OS_COMPAT_POSIX 0
-		#undef	TARGET_OS_UNDEFINED
-		
-		// Sur MacOS, on a forcément du 32 bits.
-		#define KUIntPtr	KUInt32
-	#endif
+#if TARGET_API_MAC_OSX
+#define TARGET_OS_ANDROID 0
+#define TARGET_OS_BEOS 0
+#define TARGET_OS_BSD 0
+#define TARGET_OS_LINUX 0
+#define TARGET_OS_MACOS 0
+#define TARGET_OS_NEWTON 0
+#define TARGET_OS_OPENSTEP 1
+#define TARGET_OS_POSIX 0
+#define TARGET_OS_WIN32 0
+#define TARGET_OS_CYGWIN 0
+#define TARGET_OS_COMPAT_POSIX 1
+#undef TARGET_OS_UNDEFINED
 
-	// FOUR_CHAR_CODE est déjà défini.
-	
-	#if TARGET_OS_MACOS
-		#include <MacTypes.h>
-	#endif
-	
-	typedef	UInt32			KUInt32;
-	typedef	SInt32			KSInt32;
-	typedef	UInt16			KUInt16;
-	typedef	SInt16			KSInt16;
-	typedef	SInt8			KSInt8;
-	typedef UInt8			KUInt8;
+// MacOS X could be on x86 or on ppc
+#if (defined(__ppc__) || defined(__ppc64__))
+#define TARGET_OS_OPENSTEP_PPC 1
+#define TARGET_OS_OPENSTEP_I386 0
+#define TARGET_OS_OPENSTEP_ARM 0
+#elif (defined(__i386__) || defined(__x86_64__))
+#define TARGET_OS_OPENSTEP_PPC 0
+#define TARGET_OS_OPENSTEP_I386 1
+#define TARGET_OS_OPENSTEP_ARM 0
+#elif (defined(__arm__) || defined(__arm64__))
+#define TARGET_OS_OPENSTEP_PPC 0
+#define TARGET_OS_OPENSTEP_I386 0
+#define TARGET_OS_OPENSTEP_ARM 1
+#else
+#error "Unknown MacOS X architecture"
+#endif
 
-	#ifndef HAS_C99_LONGLONG
-		#if TYPE_LONGLONG
-			#if defined(_MSC_VER) && !defined(__MWERKS__) && defined(_M_IX86)
-				#define HAS_C99_LONGLONG 0
-			#else
-				#define HAS_C99_LONGLONG 1
-			#endif
-		#else
-			#define HAS_C99_LONGLONG 0
-		#endif
-	#endif
-	
-	#if TARGET_OS_OPENSTEP
-		// pthread_cond_timedwait_relative_np is available on MacOS X.
-		#define HAS_COND_TIMEDWAIT_RELATIVE_NP 0
-	#endif
+#else
+#define TARGET_OS_ANDROID 0
+#define TARGET_OS_BEOS 0
+#define TARGET_OS_BSD 0
+#define TARGET_OS_LINUX 0
+#define TARGET_OS_MACOS 1
+#define TARGET_OS_NEWTON 0
+#define TARGET_OS_OPENSTEP 0
+#define TARGET_OS_POSIX 0
+#define TARGET_OS_WIN32 0
+#define TARGET_OS_CYGWIN 0
+#define TARGET_OS_COMPAT_POSIX 0
+#undef TARGET_OS_UNDEFINED
+
+#endif
+
+#if TARGET_OS_MACOS
+#include <MacTypes.h>
+#endif
+
+#if TARGET_OS_OPENSTEP
+// pthread_cond_timedwait_relative_np is available on MacOS X.
+#define HAS_COND_TIMEDWAIT_RELATIVE_NP 0
+#endif
 #endif
 
 #ifdef _WIN32
-	#ifndef TARGET_OS_WIN32
-		#define TARGET_OS_WIN32	1
-	#endif
+#ifndef TARGET_OS_WIN32
+#define TARGET_OS_WIN32 1
+#endif
 #endif
 
 #if TARGET_OS_CYGWIN
-	#ifndef TARGET_OS_WIN32
-		#define TARGET_OS_WIN32 1
-	#endif
+#ifndef TARGET_OS_WIN32
+#define TARGET_OS_WIN32 1
+#endif
 #endif
 
 #if TARGET_OS_WIN32
-	#define TARGET_OS_ANDROID 0
-	#define TARGET_OS_BEOS 0
-	#define TARGET_OS_BSD 0
-	#define TARGET_OS_LINUX 0
-	#define TARGET_OS_MACOS 0
-	#define TARGET_OS_NEWTON 0
-	#define TARGET_OS_OPENSTEP 0
-	#define TARGET_OS_MAC 0
-	#define TARGET_OS_POSIX 0
-	// Ça marche peut-être sous windoze. (?)
-	#ifdef TARGET_OS_CYGWIN
-		#if TARGET_OS_CYGWIN
-			#define TARGET_OS_COMPAT_POSIX 1
-		#else
-			#define TARGET_OS_COMPAT_POSIX 0
-		#endif
-	#else
-		#define TARGET_OS_CYGWIN 0
-		#define TARGET_OS_COMPAT_POSIX 0
-	#endif	
-	#undef	TARGET_OS_UNDEFINED
+#define TARGET_OS_ANDROID 0
+#define TARGET_OS_BEOS 0
+#define TARGET_OS_BSD 0
+#define TARGET_OS_LINUX 0
+#define TARGET_OS_MACOS 0
+#define TARGET_OS_NEWTON 0
+#define TARGET_OS_OPENSTEP 0
+#define TARGET_OS_MAC 0
+#define TARGET_OS_POSIX 0
+// Ça marche peut-être sous windoze. (?)
+#ifdef TARGET_OS_CYGWIN
+#if TARGET_OS_CYGWIN
+#define TARGET_OS_COMPAT_POSIX 1
+#else
+#define TARGET_OS_COMPAT_POSIX 0
+#endif
+#else
+#define TARGET_OS_CYGWIN 0
+#define TARGET_OS_COMPAT_POSIX 0
+#endif
+#undef TARGET_OS_UNDEFINED
 
-	// On suppose que c'est Win32 sur x86
-	#ifndef TARGET_RT_LITTLE_ENDIAN
-		#define TARGET_RT_LITTLE_ENDIAN 1
-	#endif
-	#ifndef TARGET_RT_BIG_ENDIAN
-		#define TARGET_RT_BIG_ENDIAN 0
-	#endif
+// On suppose que c'est Win32 sur x86
+#ifndef TARGET_RT_LITTLE_ENDIAN
+#define TARGET_RT_LITTLE_ENDIAN 1
+#endif
+#ifndef TARGET_RT_BIG_ENDIAN
+#define TARGET_RT_BIG_ENDIAN 0
+#endif
 
-	#define HAS_COND_TIMEDWAIT_RELATIVE_NP 1
-
-#	if _MSC_VER
-		typedef	unsigned __int32		KUInt32;
-		typedef	signed __int32			KSInt32;
-		typedef	unsigned __int16		KUInt16;
-		typedef	signed __int16			KSInt16;
-		typedef unsigned __int8			KUInt8;
-		typedef	signed __int8			KSInt8;
-		typedef	bool					Boolean;
-		#define FOUR_CHAR_CODE(x)		((__int32)(x))
-#	else
-		typedef	unsigned long			KUInt32;
-		typedef	signed long				KSInt32;
-		typedef	unsigned short			KUInt16;
-		typedef	signed short			KSInt16;
-		typedef	signed char				KSInt8;
-		typedef unsigned char			KUInt8;
-		typedef	bool					Boolean;
-		#define FOUR_CHAR_CODE(x)		((long)(x))
-#	endif
-
-	// We probably have long long on Windows.
-	// We have it on Cygwin for sure.
-	#define HAS_C99_LONGLONG 1
+#define HAS_COND_TIMEDWAIT_RELATIVE_NP 1
 #endif
 
 #if TARGET_OS_ANDROID
-	#define TARGET_OS_BEOS 0
-	#define TARGET_OS_BSD 0
-	#define TARGET_OS_LINUX 0
-	#define TARGET_OS_MAC 0
-	#define TARGET_OS_MACOS 0
-	#define TARGET_OS_NEWTON 0
-	#define TARGET_OS_OPENSTEP 0
-	#define TARGET_OS_WIN32	0
-	#define TARGET_OS_CYGWIN 0
-	#define TARGET_OS_COMPAT_POSIX 1
-	#undef	TARGET_OS_UNDEFINED
+#define TARGET_OS_BEOS 0
+#define TARGET_OS_BSD 0
+#define TARGET_OS_LINUX 0
+#define TARGET_OS_MAC 0
+#define TARGET_OS_MACOS 0
+#define TARGET_OS_NEWTON 0
+#define TARGET_OS_OPENSTEP 0
+#define TARGET_OS_WIN32 0
+#define TARGET_OS_CYGWIN 0
+#define TARGET_OS_COMPAT_POSIX 1
+#undef TARGET_OS_UNDEFINED
 
-	#undef HAS_EXCEPTION_HANDLING
-	#define HAS_EXCEPTION_HANDLING 0
+#undef HAS_EXCEPTION_HANDLING
+#define HAS_EXCEPTION_HANDLING 0
 
-	#define HAS_C99_LONGLONG 1
-
-	typedef	unsigned long			KUInt32;
-	typedef	signed long				KSInt32;
-	typedef	unsigned short			KUInt16;
-	typedef	signed short			KSInt16;
-	typedef	signed char				KSInt8;
-	typedef	unsigned char			KUInt8;
-	typedef	bool					Boolean;
-	#define FOUR_CHAR_CODE(x)		((long)(x))
-
-	#include <endian.h>
-	#if __BYTE_ORDER == __LITTLE_ENDIAN
-		#ifndef TARGET_RT_LITTLE_ENDIAN
-			#define TARGET_RT_LITTLE_ENDIAN 1
-		#endif
-		#ifndef TARGET_RT_BIG_ENDIAN
-			#define TARGET_RT_BIG_ENDIAN 0
-		#endif
-	#elif __BYTE_ORDER == __BIG_ENDIAN
-		#ifndef TARGET_RT_LITTLE_ENDIAN
-			#define TARGET_RT_LITTLE_ENDIAN 0
-		#endif
-		#ifndef TARGET_RT_BIG_ENDIAN
-			#define TARGET_RT_BIG_ENDIAN 1
-		#endif
-	#else
-		#if (!defined(TARGET_RT_LITTLE_ENDIAN) || !defined(TARGET_RT_BIG_ENDIAN))
-			#error "Could not guess endianness on Android platform with <endian.h>"
-		#endif
-	#endif
+#include <endian.h>
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifndef TARGET_RT_LITTLE_ENDIAN
+#define TARGET_RT_LITTLE_ENDIAN 1
+#endif
+#ifndef TARGET_RT_BIG_ENDIAN
+#define TARGET_RT_BIG_ENDIAN 0
+#endif
+#elif __BYTE_ORDER == __BIG_ENDIAN
+#ifndef TARGET_RT_LITTLE_ENDIAN
+#define TARGET_RT_LITTLE_ENDIAN 0
+#endif
+#ifndef TARGET_RT_BIG_ENDIAN
+#define TARGET_RT_BIG_ENDIAN 1
+#endif
+#else
+#if (!defined(TARGET_RT_LITTLE_ENDIAN) || !defined(TARGET_RT_BIG_ENDIAN))
+#error "Could not guess endianness on Android platform with <endian.h>"
+#endif
+#endif
 #endif
 
 #if TARGET_OS_BEOS
-	#define TARGET_OS_MACOS 0
-	#define TARGET_OS_NEWTON 0
-	#define TARGET_OS_OPENSTEP 0
-	#define TARGET_OS_MAC 0
-	#define TARGET_OS_POSIX 0
-	#define TARGET_OS_WIN32	0
-	#define TARGET_OS_CYGWIN 0
-	#define TARGET_OS_COMPAT_POSIX 1
-	#undef	TARGET_OS_UNDEFINED
+#define TARGET_OS_MACOS 0
+#define TARGET_OS_NEWTON 0
+#define TARGET_OS_OPENSTEP 0
+#define TARGET_OS_MAC 0
+#define TARGET_OS_POSIX 0
+#define TARGET_OS_WIN32 0
+#define TARGET_OS_CYGWIN 0
+#define TARGET_OS_COMPAT_POSIX 1
+#undef TARGET_OS_UNDEFINED
 
-	#include <ByteOrder.h>
-	#ifndef TARGET_RT_LITTLE_ENDIAN
-		#define TARGET_RT_LITTLE_ENDIAN B_HOST_IS_LENDIAN
-	#endif
-	#ifndef TARGET_RT_BIG_ENDIAN
-		#define TARGET_RT_BIG_ENDIAN B_HOST_IS_BENDIAN
-	#endif
-	
-	#include <SupportDefs.h>
-	typedef uint32					KUInt32;
-	typedef signed long				KSInt32;
-	typedef uint16					KUInt16;
-	typedef signed short			KSInt16;
-	typedef signed char				KSInt8;
-	typedef unsigned char			KUInt8;
-	typedef bool					Boolean;
-	#define FOUR_CHAR_CODE(x)		((long)(x))
+#include <ByteOrder.h>
+#ifndef TARGET_RT_LITTLE_ENDIAN
+#define TARGET_RT_LITTLE_ENDIAN B_HOST_IS_LENDIAN
+#endif
+#ifndef TARGET_RT_BIG_ENDIAN
+#define TARGET_RT_BIG_ENDIAN B_HOST_IS_BENDIAN
+#endif
+
+#include <SupportDefs.h>
 #endif
 
 #if TARGET_OS_BSD
-	#define TARGET_OS_ANDROID 0
-	#define TARGET_OS_BEOS 0
-	#define TARGET_OS_LINUX 0
-	#define TARGET_OS_MAC 0
-	#define TARGET_OS_MACOS 0
-	#define TARGET_OS_NEWTON 0
-	#define TARGET_OS_OPENSTEP 0
-	#define TARGET_OS_WIN32	0
-	#define TARGET_OS_CYGWIN 0
-	#define TARGET_OS_COMPAT_POSIX 1
-	#undef	TARGET_OS_UNDEFINED
+#define TARGET_OS_ANDROID 0
+#define TARGET_OS_BEOS 0
+#define TARGET_OS_LINUX 0
+#define TARGET_OS_MAC 0
+#define TARGET_OS_MACOS 0
+#define TARGET_OS_NEWTON 0
+#define TARGET_OS_OPENSTEP 0
+#define TARGET_OS_WIN32 0
+#define TARGET_OS_CYGWIN 0
+#define TARGET_OS_COMPAT_POSIX 1
+#undef TARGET_OS_UNDEFINED
 
-	// J'espère que ceci passe:
-	typedef	unsigned long			KUInt32;
-	typedef	signed long				KSInt32;
-	typedef	unsigned short			KUInt16;
-	typedef	signed short			KSInt16;
-	typedef	signed char				KSInt8;
-	typedef	unsigned char			KUInt8;
-	typedef	bool					Boolean;
-	#define FOUR_CHAR_CODE(x)		((long)(x))
-
-	// Détermination du sexe via endian.h
-	#include <sys/endian.h>
-	#if BYTE_ORDER == LITTLE_ENDIAN
-		#ifndef TARGET_RT_LITTLE_ENDIAN
-			#define TARGET_RT_LITTLE_ENDIAN 1
-		#endif
-		#ifndef TARGET_RT_BIG_ENDIAN
-			#define TARGET_RT_BIG_ENDIAN 0
-		#endif
-	#elif BYTE_ORDER == BIG_ENDIAN
-		#ifndef TARGET_RT_LITTLE_ENDIAN
-			#define TARGET_RT_LITTLE_ENDIAN 0
-		#endif
-		#ifndef TARGET_RT_BIG_ENDIAN
-			#define TARGET_RT_BIG_ENDIAN 1
-		#endif
-	#else
-		#if (!defined(TARGET_RT_LITTLE_ENDIAN) || !defined(TARGET_RT_BIG_ENDIAN))
-			#error "Could not guess endianness on BSD platform with <sys/endian.h>"
-		#endif
-	#endif
-
-	// Test de unsigned long long sur Linux: on utilise __GLIBC_HAVE_LONG_LONG.
-	// Pas parfait.
-	#ifndef HAS_C99_LONGLONG
-		#include <sys/types.h>
-		#include <sys/cdefs.h>
-	#endif
+// Détermination du sexe via endian.h
+#include <sys/endian.h>
+#if BYTE_ORDER == LITTLE_ENDIAN
+#ifndef TARGET_RT_LITTLE_ENDIAN
+#define TARGET_RT_LITTLE_ENDIAN 1
+#endif
+#ifndef TARGET_RT_BIG_ENDIAN
+#define TARGET_RT_BIG_ENDIAN 0
+#endif
+#elif BYTE_ORDER == BIG_ENDIAN
+#ifndef TARGET_RT_LITTLE_ENDIAN
+#define TARGET_RT_LITTLE_ENDIAN 0
+#endif
+#ifndef TARGET_RT_BIG_ENDIAN
+#define TARGET_RT_BIG_ENDIAN 1
+#endif
+#else
+#if (!defined(TARGET_RT_LITTLE_ENDIAN) || !defined(TARGET_RT_BIG_ENDIAN))
+#error "Could not guess endianness on BSD platform with <sys/endian.h>"
+#endif
+#endif
 #endif
 
 #if TARGET_OS_LINUX
-	#define TARGET_OS_ANDROID 0
-	#define TARGET_OS_BEOS 0
-	#define TARGET_OS_BSD 0
-	#define TARGET_OS_MAC 0
-	#define TARGET_OS_MACOS 0
-	#define TARGET_OS_NEWTON 0
-	#define TARGET_OS_OPENSTEP 0
-	#define TARGET_OS_WIN32	0
-	#define TARGET_OS_CYGWIN 0
-	#define TARGET_OS_COMPAT_POSIX 1
-	#undef	TARGET_OS_UNDEFINED
+#include <cstdint>
+#define TARGET_OS_ANDROID 0
+#define TARGET_OS_BEOS 0
+#define TARGET_OS_BSD 0
+#define TARGET_OS_MAC 0
+#define TARGET_OS_MACOS 0
+#define TARGET_OS_NEWTON 0
+#define TARGET_OS_OPENSTEP 0
+#define TARGET_OS_WIN32 0
+#define TARGET_OS_CYGWIN 0
+#define TARGET_OS_COMPAT_POSIX 1
+#undef TARGET_OS_UNDEFINED
 
-	// Autoconf...
+// Autoconf...
 //	#include <linux/autoconf.h>
 
-	// Definitions specifiques a Linux.
-	#ifdef _XOPEN_SOURCE
-		#undef _XOPEN_SOURCE
-	#endif
-	#define _XOPEN_SOURCE 500
-	#ifdef _XOPEN_SOURCE_EXTENDED
-		#undef _XOPEN_SOURCE_EXTENDED
-	#endif
-	#define _XOPEN_SOURCE_EXTENDED 1
+// Definitions specifiques a Linux.
+#ifdef _XOPEN_SOURCE
+#undef _XOPEN_SOURCE
+#endif
+#define _XOPEN_SOURCE 500
+#ifdef _XOPEN_SOURCE_EXTENDED
+#undef _XOPEN_SOURCE_EXTENDED
+#endif
+#define _XOPEN_SOURCE_EXTENDED 1
 
-	// J'espère que ceci passe:
-	typedef	unsigned long			KUInt32;
-	typedef	signed long				KSInt32;
-	typedef	unsigned short			KUInt16;
-	typedef	signed short			KSInt16;
-	typedef	signed char				KSInt8;
-	typedef	unsigned char			KUInt8;
-	typedef	bool					Boolean;
-	#define FOUR_CHAR_CODE(x)		((long)(x))
-
-	// Détermination du sexe via endian.h
-	#include <endian.h>
-	#if __BYTE_ORDER == __LITTLE_ENDIAN
-		#ifndef TARGET_RT_LITTLE_ENDIAN
-			#define TARGET_RT_LITTLE_ENDIAN 1
-		#endif
-		#ifndef TARGET_RT_BIG_ENDIAN
-			#define TARGET_RT_BIG_ENDIAN 0
-		#endif
-	#elif __BYTE_ORDER == __BIG_ENDIAN
-		#ifndef TARGET_RT_LITTLE_ENDIAN
-			#define TARGET_RT_LITTLE_ENDIAN 0
-		#endif
-		#ifndef TARGET_RT_BIG_ENDIAN
-			#define TARGET_RT_BIG_ENDIAN 1
-		#endif
-	#else
-		#if (!defined(TARGET_RT_LITTLE_ENDIAN) || !defined(TARGET_RT_BIG_ENDIAN))
-			#error "Could not guess endianness on Linux platform with <endian.h>"
-		#endif
-	#endif
+// Détermination du sexe via endian.h
+#include <endian.h>
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifndef TARGET_RT_LITTLE_ENDIAN
+#define TARGET_RT_LITTLE_ENDIAN 1
+#endif
+#ifndef TARGET_RT_BIG_ENDIAN
+#define TARGET_RT_BIG_ENDIAN 0
+#endif
+#elif __BYTE_ORDER == __BIG_ENDIAN
+#ifndef TARGET_RT_LITTLE_ENDIAN
+#define TARGET_RT_LITTLE_ENDIAN 0
+#endif
+#ifndef TARGET_RT_BIG_ENDIAN
+#define TARGET_RT_BIG_ENDIAN 1
+#endif
+#else
+#if (!defined(TARGET_RT_LITTLE_ENDIAN) || !defined(TARGET_RT_BIG_ENDIAN))
+#error "Could not guess endianness on Linux platform with <endian.h>"
+#endif
+#endif
 #endif
 
 #if TARGET_OS_POSIX
-	#define TARGET_OS_ANDROID 0
-	#define TARGET_OS_BEOS 0
-	#define TARGET_OS_BSD 0
-	#define TARGET_OS_LINUX 0
-	#define TARGET_OS_MAC 0
-	#define TARGET_OS_MACOS 0
-	#define TARGET_OS_NEWTON 0
-	#define TARGET_OS_OPENSTEP 0
-	#define TARGET_OS_WIN32	0
-	#define TARGET_OS_CYGWIN 0
-	#define TARGET_OS_COMPAT_POSIX 1
-	#undef	TARGET_OS_UNDEFINED
-
-	// J'espère que ceci passe:
-	typedef	unsigned long			KUInt32;
-	typedef	signed long				KSInt32;
-	typedef	unsigned short			KUInt16;
-	typedef	signed short			KSInt16;
-	typedef	signed char				KSInt8;
-	typedef	unsigned char			KUInt8;
-	typedef	bool					Boolean;
-	#define FOUR_CHAR_CODE(x)		((long)(x))
-#endif
-
-// Entiers 64 bits.
-#ifndef HAS_C99_LONGLONG
-	#if defined(__GLIBC_HAVE_LONG_LONG) || defined(__LONG_LONG_SUPPORTED)
-		#define HAS_C99_LONGLONG 1
-	#else
-		#define HAS_C99_LONGLONG 0
-	#endif
+#define TARGET_OS_ANDROID 0
+#define TARGET_OS_BEOS 0
+#define TARGET_OS_BSD 0
+#define TARGET_OS_LINUX 0
+#define TARGET_OS_MAC 0
+#define TARGET_OS_MACOS 0
+#define TARGET_OS_NEWTON 0
+#define TARGET_OS_OPENSTEP 0
+#define TARGET_OS_WIN32 0
+#define TARGET_OS_CYGWIN 0
+#define TARGET_OS_COMPAT_POSIX 1
+#undef TARGET_OS_UNDEFINED
 #endif
 
 // snprintf
 #ifndef HAS_C99_SNPRINTF
-	#define HAS_C99_SNPRINTF 1
-#endif
-
-#if HAS_C99_LONGLONG
-	typedef unsigned long long		KUInt64;
-	typedef signed long long		KSInt64;
-#else
-	#include <K/Math/TUInt64.h>
-	#include <K/Math/TSInt64.h>
-	typedef TUInt64					KUInt64;
-	typedef TSInt64					KSInt64;
+#define HAS_C99_SNPRINTF 1
 #endif
 
 #ifdef TARGET_OS_UNDEFINED
-	#error "No valid target was specified!"
+#error "No valid target was specified!"
 #endif
 
 #ifndef TARGET_RT_LITTLE_ENDIAN
-	#if __BIG_ENDIAN__
-		#define TARGET_RT_LITTLE_ENDIAN 0
-	#elif __LITTLE_ENDIAN__
-		#define TARGET_RT_LITTLE_ENDIAN 1
-	#else
-		#error "Endianness isn't (completely) defined!"
-	#endif
+#if __BIG_ENDIAN__
+#define TARGET_RT_LITTLE_ENDIAN 0
+#elif __LITTLE_ENDIAN__
+#define TARGET_RT_LITTLE_ENDIAN 1
+#else
+#error "Endianness isn't (completely) defined!"
+#endif
 #endif
 #ifndef TARGET_RT_BIG_ENDIAN
-	#if __BIG_ENDIAN__
-		#define TARGET_RT_BIG_ENDIAN 1
-	#elif __LITTLE_ENDIAN__
-		#define TARGET_RT_BIG_ENDIAN 0
-	#else
-		#error "Endianness isn't (completely) defined!"
-	#endif
+#if __BIG_ENDIAN__
+#define TARGET_RT_BIG_ENDIAN 1
+#elif __LITTLE_ENDIAN__
+#define TARGET_RT_BIG_ENDIAN 0
+#else
+#error "Endianness isn't (completely) defined!"
+#endif
 #endif
 
 #ifndef NULL
-	#define NULL		0L
+#define NULL nullptr
 #endif
 #ifndef nil
-	#define nil			NULL
+#define nil nullptr
 #endif
 
 #ifndef HAS_COND_TIMEDWAIT_RELATIVE_NP
-	#define HAS_COND_TIMEDWAIT_RELATIVE_NP 0
+#define HAS_COND_TIMEDWAIT_RELATIVE_NP 0
 #endif
 
+#include <cstdint>
 
-// Par défaut, on a les portées.
-#ifndef HAS_NAMESPACES
-	#define HAS_NAMESPACES 1
+typedef uint64_t KUInt64;
+typedef int64_t KSInt64;
+typedef uint32_t KUInt32;
+typedef int32_t KSInt32;
+typedef uint16_t KUInt16;
+typedef int16_t KSInt16;
+typedef uint8_t KUInt8;
+typedef int8_t KSInt8;
+typedef uintptr_t KUIntPtr;
+
+#if TARGET_OS_LINUX
+typedef bool Boolean;
 #endif
 
-#if HAS_NAMESPACES
-	#define NAMESPACE(__name) namespace __name
-#else
+#if TARGET_OS_ANDROID
+typedef bool Boolean;
 #endif
 
-// Cas par défaut: 32 bits.
-#ifndef KUIntPtr
-	#define KUIntPtr	KUInt32
+#if TARGET_OS_WIN32
+typedef bool Boolean;
+typedef signed long ssize_t;
 #endif
 
+static_assert(sizeof(KUInt8) == 1, "Size of KUInt8 must be 1 byte");
+static_assert(sizeof(KUInt16) == 2, "Size of KUInt16 must be 2 bytes");
+static_assert(sizeof(KUInt32) == 4, "Size of KUInt32 must be 4 bytes");
+static_assert(sizeof(KUInt64) == 8, "Size of KUInt64 must be 8 bytes");
+static_assert(sizeof(KUIntPtr) == sizeof(void*), "Size of KUIntPtr must the same as the size of a pointer");
+
+// ---- Use this a simple printf() replacement.
+//      This is useful for platforms that don't support stdio out of the box.
+//      It is located in this file to make it universally available without extra #include's
+#ifdef _DEBUG
+#ifdef _MSC_VER
+// KPrintf is implemented in TTraceMonitor.cpp
+extern void KPrintf(const char* format, ...);
+#else // _MSC_VER
+#define KPrintf(...) fprintf(stderr, __VA_ARGS__)
+#endif // _MSC_VER
+#else // _DEBUG
+// Make sure that the trailing semicolon is used up, the compiler will optimize this away
+#define KPrintf(...)
+#endif // _DEBUG
+
 #endif
-		// __KDEFINITIONS__
+// __KDEFINITIONS__
 
 // ============================= //
 // Pause for storage relocation. //

@@ -32,7 +32,7 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision$
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TMaemoApp
 {
@@ -40,39 +40,38 @@ public:
 	///
 	/// Default constructor.
 	///
-	TMaemoApp( void );
+	TMaemoApp(void);
 
 	///
 	/// Destructor.
 	///
-	~TMaemoApp( void );
+	~TMaemoApp(void);
 
 	///
 	/// Entry point.
 	///
-	void Run( int argc, char* argv[] );
+	void Run(int argc, char* argv[]);
 
 private:
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TMaemoApp( const TMaemoApp& inCopy );
+	TMaemoApp(const TMaemoApp& inCopy);
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TMaemoApp& operator = ( const TMaemoApp& inCopy );
+	TMaemoApp& operator=(const TMaemoApp& inCopy);
 
 	/// \name Variables
-
 };
 
 #endif
-		// _TMAEMOAPP_H
+// _TMAEMOAPP_H
 
 // ======================================================================= //
 // One good reason why computers can do more work than people is that they //

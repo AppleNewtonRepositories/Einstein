@@ -28,14 +28,14 @@
 
 // POSIX & ANSI C
 #if TARGET_OS_WIN32
-	#include <time.h>
+#include <time.h>
 #else
-	#include <sys/time.h>
+#include <sys/time.h>
 #endif
 
 // Einstein
-#include "TMemoryConsts.h"
-#include "JIT.h"
+#include "Emulator/TMemoryConsts.h"
+#include "Emulator/JIT/JIT.h"
 
 class TMappedFile;
 
@@ -48,103 +48,121 @@ public:
 	///
 	/// Default constructor.
 	///
-	TROMImage( void );
+	TROMImage(void);
 
 	///
 	/// Destructor.
 	///
-	~TROMImage( void );
+	~TROMImage(void);
 
 	///
 	/// Accessor to the ROM Pointer.
 	///
 	/// \return a pointer to the ROM data.
 	///
-	KUInt8* GetPointer( void ) const
-		{
-			return mImage->fROM;
-		}
+	KUInt8*
+	GetPointer(void) const
+	{
+		return mImage->fROM;
+	}
+
+	///
+	/// Return the error code that may have been set when loading the ROM
+	///
+	KUInt32
+	GetErrorCode()
+	{
+		return mErrorCode;
+	}
+
+	static const KUInt32 kNoError = 0;
+	static const KUInt32 kErrorLoadingROMFile = 1;
+	static const KUInt32 kErrorLoadingNewtonREXFile = 2;
+	static const KUInt32 kErrorLoadingEinsteinREXFile = 3;
+	static const KUInt32 kErrorWrongSize = 4;
 
 	///
 	/// Compute the checksums.
 	///
-	void	ComputeChecksums( KUInt32 outChecksums[10] ) const;
+	void ComputeChecksums(KUInt32 outChecksums[10]) const;
+
+	///
+	/// Return the ID of the ROM as calculated by a CRC32 checksum
+	///
+	KSInt32
+	GetROMId()
+	{
+		return mROMId;
+	}
+
+	///
+	/// Return true if the CRC32 for the lower 8MB of ROM is valid for the ROM ID.
+	///
+	bool
+	CRCValid()
+	{
+		return mCRCValid;
+	}
+
+	static const KSInt32 kUnknownROM = -1;
+	static const KSInt32 k717006 = 0;
+	static const KSInt32 kMP2x00DROM = 1;
+	static const KSInt32 kEMate300ROM = 2;
+	static const KSInt32 kWatsonROM = 3;
+
+	static TROMImage* LoadROMAndREX(const char* theROMImagePath, Boolean useMonitor, Boolean useExternalERex);
 
 protected:
 	///
-	/// Determine if the mmap is outdated and should be redone.
+	/// Create the image, flip the endian, and apply patches if available
 	///
-	/// \param inPath			path to the map.
-	/// \param inModDate		modification date (to compare with the
-	///							modification date of the map).
-	/// \param inMachineString	identification of the machine (and of the ROM).
-	///
-	static Boolean IsImageOutdated(
-				const char* inPath,
-				time_t inModDate,
-				const char inMachineString[6] );
-	
-	///
-	/// Create the mmap file.
-	///
-	static void CreateImage(
-						const char* inPath,
-						const KUInt8* inBuffer,
-						KUInt32 inBufferSize,
-						const char inMachineString[6] );
-
-	///
-	/// Init from the mmap path.
-	///
-	/// \param inMonitorMode	if we are in monitor mode (more things are
-	///							allowed then)
-	///
-	void Init( const char* inPath, Boolean inMonitorMode );
+	void CreateImage(const KUInt8* inBuffer);
 
 	///
 	/// Check the modification date of a file.
 	/// Update the timespec to reflect the latest modification date.
 	///
-	static int	GetLatestModDate(
-				time_t* ioModDate,
-				const char* inPath );
+	static int GetLatestModDate(
+		time_t* ioModDate,
+		int fd);
+
+	///
+	/// Find out what ROM we have by calculating its CRC
+	///
+	static KSInt32 ComputeROMId(KUInt8* data, bool& outCRCValid);
+
+	KUInt32 mErrorCode = kNoError;
 
 private:
 	///
 	/// Structure of the image.
 	///
 	struct SImageInfo {
-		KUInt32		fMagic;
-		KUInt32		fVersion;
-		KUInt32     fJITID;
-		KUInt32     fJITVersion;
-		char		fMachineString[6];
-		char		fPadding[2];
-		KUInt32		fChecksums[10];
+		KUInt32 fChecksums[10];
 	};
-	
+
 	struct SImage {
-		KUInt8		fROM[TMemoryConsts::kHighROMEnd];	// 8 MB ROM + 8 MB REX = 16 MB
-		SImageInfo  fInfo;
+		KUInt8 fROM[TMemoryConsts::kHighROMEnd]; // 8 MB ROM + 8 MB REX = 16 MB
+		SImageInfo fInfo;
 	};
 
 	enum {
-		kMagic		= 0x424C5447,
-		kVersion	= 2,
+		kMagic = 0x424C5447,
+		kVersion = 2,
 	};
-	
+
 	///
 	/// Compute the checksums.
 	///
-	static void	DoComputeChecksums( SImage* inImage );
+	static void DoComputeChecksums(SImage* inImage);
 
 	///
 	/// Compute the checksum for a segment.
 	///
-	static void	ComputeSegmentChecksums(
-						const KUInt8* inPointer,
-						KUInt32 inSize,
-						KUInt32 outChecksums[2] );
+	static void ComputeSegmentChecksums(
+		const KUInt8* inPointer,
+		KUInt32 inSize,
+		KUInt32 outChecksums[2]);
 
 	///
 	/// Analyze the first 8 MB of a flat rom and fill the
@@ -156,28 +174,31 @@ private:
 	/// \param outRexSizes	the sizes of the RExes
 	/// \return the number of rexes found
 	///
-	static KUInt32	LookForREXes(
-						const KUInt8* inBuffer,
-						KUInt32* outBaseSize,
-						KUInt32 outRexBases[4],
-						KUInt32 outRexSizes[4] );
+	static KUInt32 LookForREXes(
+		const KUInt8* inBuffer,
+		KUInt32* outBaseSize,
+		KUInt32 outRexBases[4],
+		KUInt32 outRexSizes[4]);
 
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TROMImage( const TROMImage& inCopy );
+	TROMImage(const TROMImage& inCopy) = delete;
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TROMImage& operator = ( const TROMImage& inCopy );
-	
-	TMappedFile*	mMappedFile;	///< mapped file with the rom.
-	SImage*			mImage; 		///< image structure.
+	TROMImage& operator=(const TROMImage& inCopy) = delete;
+
+	SImage* mImage; ///< image structure.
+
+	KSInt32 mROMId = kUnknownROM;
+
+	bool mCRCValid = true;
 };
 
 #endif

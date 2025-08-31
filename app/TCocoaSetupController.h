@@ -43,10 +43,9 @@ class TPlatformManager;
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 147 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
-@interface TCocoaSetupController : NSObject
-{
+@interface TCocoaSetupController : NSObject {
 	IBOutlet NSSlider* mRAMSizeSlider;
 	IBOutlet NSTextField* mRAMSizeTextField;
 	IBOutlet NSWindow* mSetupWindow;
@@ -56,8 +55,8 @@ class TPlatformManager;
 	IBOutlet NSUserDefaultsController* mUserDefaultsController;
 	IBOutlet TCocoaAppController* mAppController;
 	IBOutlet NSMenuItem* mPreferencesMenuItem;
-	
-	BOOL	buttonsAreStartAndQuit;
+
+	BOOL buttonsAreStartAndQuit;
 }
 
 // NSNibAwaking
@@ -81,11 +80,11 @@ class TPlatformManager;
 
 // Private methods.
 - (void)setupRAMSizeWidgets;
-- (void)updateRAMSizeTextField:(int) inValue;
+- (void)updateRAMSizeTextField:(int)inValue;
 @end
 
 #endif
-		// _TCOCOASETUPCONTROLLER_H
+// _TCOCOASETUPCONTROLLER_H
 
 // ============================================================================ //
 // Beware of the Turing Tar-pit in which everything is possible but nothing of  //

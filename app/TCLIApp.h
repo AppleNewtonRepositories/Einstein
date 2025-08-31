@@ -44,145 +44,147 @@ class TSymbolList;
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 113 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TCLIApp
 {
 public:
 	///
-	/// Constructeur par défaut.
+	/// Constructeur par d√©faut.
 	///
-	TCLIApp( void );
+	TCLIApp(void);
 
 	///
 	/// Destructeur.
 	///
-	~TCLIApp( void );
+	~TCLIApp(void);
 
 	///
-	/// Point d'entrée.
+	/// Point d'entr√©e.
 	///
-	void Run( int argc, char* argv[] );
+	void Run(int argc, char* argv[]);
 
 private:
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TCLIApp( const TCLIApp& inCopy );
+	TCLIApp(const TCLIApp& inCopy);
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TCLIApp& operator = ( const TCLIApp& inCopy );
+	TCLIApp& operator=(const TCLIApp& inCopy);
 
 	///
 	/// Affiche un message d'erreur sur la syntaxe et sort.
 	///
-	void SyntaxError( void );
-	
+	void SyntaxError(void);
+
 	///
 	/// Affiche un message d'erreur sur la syntaxe (une option en particulier)
 	/// et sort.
 	///
 	/// \param inBadOption	bad option
 	///
-	void SyntaxError( const char* inBadOption );
-	
+	void SyntaxError(const char* inBadOption);
+
 	///
 	/// Affiche l'aide et sort.
 	///
-	void Help( void );
-	
+	void Help(void);
+
 	///
 	/// Affiche la version et sort.
 	///
-	void Version( void );
-	
-	///
-	/// Crée le gestionnaire de son.
-	///
-	void CreateSoundManager( const char* inClass );
-	
-	///
-	/// Crée le gestionnaire d'écran.
-	///
-	void CreateScreenManager(
-				const char* inClass,
-				int inPortraitWidth,
-				int inPortraitHeight,
-				Boolean inFullScreen);
-	
-	///
-	/// Crée le log.
-	///
-	void CreateLog( const char* inPath );
-	
-	///
-	/// Point d'entrée du processus léger.
-	///
-	static void* SThreadEntry( void* inUserData )
-		{
-			((TCLIApp*) inUserData)->ThreadEntry();
-			return NULL;
-		}
+	void Version(void);
 
 	///
-	/// Point d'entrée du processus léger.
+	/// Cr√©e le gestionnaire de son.
 	///
-	void ThreadEntry( void );
+	void CreateSoundManager(const char* inClass);
+
+	///
+	/// Cr√©e le gestionnaire d'√©cran.
+	///
+	void CreateScreenManager(
+		const char* inClass,
+		int inPortraitWidth,
+		int inPortraitHeight,
+		Boolean inFullScreen);
+
+	///
+	/// Cr√©e le log.
+	///
+	void CreateLog(const char* inPath);
+
+	///
+	/// Point d'entr√©e du processus l√©ger.
+	///
+	static void*
+	SThreadEntry(void* inUserData)
+	{
+		((TCLIApp*) inUserData)->ThreadEntry();
+		return NULL;
+	}
+
+	///
+	/// Point d'entr√©e du processus l√©ger.
+	///
+	void ThreadEntry(void);
 
 	///
 	/// Boucle du menu.
 	///
-	void MenuLoop( void );
+	void MenuLoop(void);
 
 	///
 	/// Boucle du menu (moniteur)
 	///
-	void MonitorMenuLoop( void );
+	void MonitorMenuLoop(void);
 
 	///
 	/// Boucle du menu (app)
 	///
-	void AppMenuLoop( void );
+	void AppMenuLoop(void);
 
 	///
 	/// Execute a command.
 	///
 	/// \return true if the command was known.
 	///
-	Boolean ExecuteCommand( const char* inCommand );
+	Boolean ExecuteCommand(const char* inCommand);
 
 	///
 	/// Affiche l'aide (du menu)
 	///
-	void PrintHelp( void );
+	void PrintHelp(void);
 
 	///
 	/// Affiche une ligne (dans stdout ou via le moniteur)
 	///
-	void PrintLine( const char* inLine );
+	void PrintLine(const char* inLine);
 
 	/// \name Variables
-	const char*			mProgramName;		///< Nom du programme.
-	TROMImage*			mROMImage;			///< Image ROM.
-	TEmulator*			mEmulator;			///< Emulateur.
-	TNetworkManager*	mNetworkManager;	///< Network Manager.
-	TSoundManager*		mSoundManager;		///< Gestionnaire de son.
-	TScreenManager*		mScreenManager;		///< Gestionnaire d'écran.
-	TPlatformManager*	mPlatformManager;	///< Reference to the platform manager.
-	TLog*				mLog;				///< Log.
-	TMonitor*			mMonitor;			///< Monitor.
-	TSymbolList*		mSymbolList;		///< List of symbols.
-	Boolean				mQuit;				///< If we should quit.
+	const char* mProgramName; ///< Nom du programme.
+	TROMImage* mROMImage; ///< Image ROM.
+	TEmulator* mEmulator; ///< Emulateur.
+	TNetworkManager* mNetworkManager; ///< Network Manager.
+	TSoundManager* mSoundManager; ///< Gestionnaire de son.
+	TScreenManager* mScreenManager; ///< Gestionnaire d'√©cran.
+	TPlatformManager* mPlatformManager; ///< Reference to the platform manager.
+	TLog* mLog; ///< Log.
+	TMonitor* mMonitor; ///< Monitor.
+	TSymbolList* mSymbolList; ///< List of symbols.
+	Boolean mQuit; ///< If we should quit.
+	int mCmdPipe[2] { -1, -1 }; ///< Make the command line wait for keyboard an a possible Quit event
 };
 
 #endif
-		// _TCLIAPP_H
+// _TCLIAPP_H
 
 // ============================================================================ //
 // Mac Airways:                                                                 //

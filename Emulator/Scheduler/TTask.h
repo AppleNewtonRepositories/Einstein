@@ -35,7 +35,7 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision$
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TTask : public TDoubleLinkedElem
 {
@@ -43,56 +43,56 @@ public:
 	///
 	/// Default constructor.
 	///
-	TTask( void );
+	TTask(void);
 
 	///
 	/// Destructor.
 	///
-	~TTask( void );
+	~TTask(void);
 
 	///
 	/// Determine if we're the current task.
 	///
-	Boolean IsCurrentTask( void ) const;
+	Boolean IsCurrentTask(void) const;
 
 	///
 	/// Suspend for EnterAtomic.
 	///
-	void SuspendAtomic( void );
+	void SuspendAtomic(void);
 
 	///
 	/// Resume for ExitAtomic.
 	///
-	void ExitAtomic( void );
+	void ExitAtomic(void);
 
 	///
 	/// Thread entry point.
 	///
-	void Run( void );
+	void Run(void);
 
 private:
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TTask( const TTask& inCopy );
+	TTask(const TTask& inCopy);
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TTask& operator = ( const TTask& inCopy );
+	TTask& operator=(const TTask& inCopy);
 
 	/// \name Variables
-	TThread<TTask>	mThread;			///< Thread associated with this task.
-	Boolean			mAtomicSuspended;	///< If the task was suspended with
-										///< SuspendAtomic.
+	TThread<TTask> mThread; ///< Thread associated with this task.
+	Boolean mAtomicSuspended; ///< If the task was suspended with
+							  ///< SuspendAtomic.
 };
 
 #endif
-		// _TTASK_H
+// _TTASK_H
 
 // ============================================================ //
 // Do you guys know what you're doing, or are you just hacking? //

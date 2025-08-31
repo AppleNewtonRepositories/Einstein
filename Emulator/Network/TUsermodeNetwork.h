@@ -1,8 +1,8 @@
 // ==============================
-// File:			TUsermodeNetwork.h
-// Project:			Einstein
+// File:            TUsermodeNetwork.h
+// Project:            Einstein
 //
-// Copyright 2010 by Matthias Melcher (mm@matthiasm.com).
+// Copyright 2010-2022 by Matthias Melcher (mm@matthiasm.com).
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,9 +24,8 @@
 #ifndef _TUSERMODENETWORK_H
 #define _TUSERMODENETWORK_H
 
-#include "TNetworkManager.h"
 #include <K/Defines/KDefinitions.h>
-
+#include "TNetworkManager.h"
 
 class TLog;
 class TInterruptManager;
@@ -34,7 +33,6 @@ class TMemoryManager;
 
 class PacketHandler;
 class Packet;
-
 
 ///
 /// Emulation of a PCMCIA network card on PCMCIA driver level (see Lantern)
@@ -44,16 +42,18 @@ class Packet;
 class TUsermodeNetwork : public TNetworkManager
 {
 public:
-	
-	static const int kMaxTxBuffer = 1514-54;
-	static const int kMaxRxBuffer = 1518-54;
-	
+	static const int kMaxTxBuffer = 1448;
+	static const int kMaxRxBuffer = 1448;
+
+	///
+	/// Constructor
+	///
 	TUsermodeNetwork(TLog* inLog);
-	
+
 	///
 	/// Destructor.
 	///
-	virtual ~TUsermodeNetwork();
+	~TUsermodeNetwork() override;
 
 	///
 	/// Newton sends a block of data.
@@ -63,60 +63,90 @@ public:
 	/// \param data send this block of data from the Newton to the world
 	/// \param size of the block
 	///
-	virtual int SendPacket(KUInt8 *data, KUInt32 size);
-	
+	int SendPacket(KUInt8* data, KUInt32 size) override;
+
 	///
 	/// Fill the buffer with the MAC address of the network card.
 	///
 	/// \param data pointer to a six byte buffer
 	/// \param size ethernet MAC addresses are always 6 bytes
 	///
-	virtual int GetDeviceAddress(KUInt8 *data, KUInt32 size);
-	
+	int GetDeviceAddress(KUInt8* data, KUInt32 size) override;
+
 	///
 	/// Number of bytes available for Newton.
 	/// This number is polled on a regular base. If no block is available,
 	/// return 0. If a block of data is waiting, return the size of the raw
 	/// ethernet datagram. Do not split blocks of data unless you create a
-	/// complete rwa ethernet datagramm for each of them.	
+	/// complete raw ethernet datagramm for each of them.
 	///
 	/// \return the number of bytes in the first block that is available for the Newton
 	///
-	virtual KUInt32 DataAvailable();
-	
+	KUInt32 DataAvailable() override;
+
 	///
 	/// Newton receives a block of data.
-	/// Copy the block that was received from the outside world int this buffer.
-	/// The Newton expects a raw ethernet datagramm. The size will always be
+	/// Copy the block that was received from the outside world into this buffer.
+	/// The Newton expects a raw ethernet datagramm. The size will always(?) be
 	/// whatever the menager returned in a previous call to DataAvailable().
 	///
 	/// \param data fill this buffer with the next available block of data
 	/// \param size the number of bytes that we expect in the buffer
 	///
-	virtual int ReceiveData(KUInt8 *data, KUInt32 size);
-	
+	int ReceiveData(KUInt8* data, KUInt32 size) override;
+
 	///
 	/// Newton device timer expired.
 	/// Out of lazyness and for testing only, we use this timer to poll the open
 	/// sockets of all active protocols.
 	///
-	int TimerExpired();
-	
+	int TimerExpired() override;
+
+	///
+	/// Add a new packet handler to the list.
+	///
 	void AddPacketHandler(PacketHandler*);
-	
+
+	///
+	/// Remove the packet handler from the list and delete it.
 	void RemovePacketHandler(PacketHandler*);
-	
+
+	///
+	/// Add a package to the Fifo so that NewtonOS can pick it up later.
+	///
 	void Enqueue(Packet*);
-	
+
+	///
+	/// Remove the oldest packet from the Fifo.
+	///
 	void DropPacket();
-	
+
+	///
+	/// Chek if any packets are in the Fifo.
+	///
+	bool
+	PacketAvailable()
+	{
+		return (mLastPacket != nullptr);
+	}
+
+	///
+	/// Print a brief summary of a packge.
+	///
+	void Log(class Packet* p, const char* label, int line, int adjSeq = 0, int adjAck = 0);
+
 private:
-	PacketHandler	*mFirstPacketHandler, *mLastPacketHandler;
-	Packet			*mFirstPacket, *mLastPacket;
+	// Linked list of packet handlers.
+	PacketHandler* mFirstPacketHandler = nullptr;
+	PacketHandler* mLastPacketHandler = nullptr;
+
+	// Double linked list of packets, used as a Fifo.
+	Packet* mFirstPacket = nullptr;
+	Packet* mLastPacket = nullptr;
 };
 
 #endif
-		// _TUSERMODENETWORK_H
+// _TUSERMODENETWORK_H
 
 // ============================================ //
 // The first time, it's a KLUDGE!               //

@@ -27,6 +27,7 @@
 #include <K/Defines/KDefinitions.h>
 
 class TSymbolList;
+class TMemory;
 
 ///
 /// Class for a disassembler.
@@ -34,7 +35,7 @@ class TSymbolList;
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 111 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class UDisasm
 {
@@ -43,23 +44,30 @@ public:
 	/// Disassemble one line.
 	///
 	static void Disasm(
-					char* outString,
-					int inStringSize,
-					KUInt32 inAddr,
-					KUInt32 inInstruction,
-					TSymbolList* inSymbolList=0L );
-	
+		char* outString,
+		int inStringSize,
+		KUInt32 inAddr,
+		KUInt32 inInstruction,
+		TSymbolList* inSymbolList = 0L);
+
 	///
 	/// make symbol list access easy
 	///
 	static void setSymbolList(TSymbolList*);
-	
+
+	///
+	/// make memory access possible
+	///
+	static void setMemory(TMemory*);
+
+	static TMemory* pMemory;
+
 private:
-	static TSymbolList *pSymbolList;
+	static TSymbolList* pSymbolList;
 };
 
 #endif
-		// _UDISASM_H
+// _UDISASM_H
 
 // ============================================================================ //
 // Windows Airlines:                                                            //

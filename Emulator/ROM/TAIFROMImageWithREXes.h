@@ -35,11 +35,10 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 151 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TAIFROMImageWithREXes
-	:
-		public TROMImage
+		: public TROMImage
 {
 public:
 	///
@@ -49,21 +48,18 @@ public:
 	/// \param inREX0Path	path to the REX0 file.
 	/// \param inREX1Path	path to the REX1 file.
 	///
-	TAIFROMImageWithREXes(
-					const char* inROMPath,
-					const char* inREX0Path,
-					const char* inREX1Path,
-					const char inMachineString[6],
-					Boolean inMonitorMode = false );
+	TAIFROMImageWithREXes(const char* inROMPath,
+		const char* inREX0Path,
+		const char* inREX1Path);
 
 	///
 	/// Destructeur.
 	///
-	~TAIFROMImageWithREXes( void );
+	~TAIFROMImageWithREXes(void);
 };
 
 #endif
-		// _TAIFROMIMAGEWITHREXES_H
+// _TAIFROMIMAGEWITHREXES_H
 
 // ====================================================================== //
 // Real computer scientists don't program in assembler.  They don't write //

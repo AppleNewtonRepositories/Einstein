@@ -2,7 +2,7 @@
 // File:			TNetworkManager.h
 // Project:			Einstein
 //
-// Copyright 2010 by Matthias Melcher (mm@matthiasm.com).
+// Copyright 2010-2020 by Matthias Melcher (mm@matthiasm.com).
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,10 +25,18 @@
 #define _TNETWORKMANAGER_H
 
 #include <K/Defines/KDefinitions.h>
+#if TARGET_OS_WIN32
+#ifdef _WINSOCKAPI_
+#error winsock.h included before winsock2.h - you must define WIN32_LEAN_AND_MEAN somewhere!
+#endif
+#include <WinSock2.h>
+#else
 #include <sys/select.h>
 
 #if RASPBERRY_PI || TARGET_OS_LINUX
 #include <sys/socket.h>
+#endif
+
 #endif
 
 class TLog;
@@ -37,7 +45,6 @@ class TMemory;
 class TThread;
 class TMutex;
 class TCondVar;
-
 
 ///
 /// Emulation of a PCMCIA network card on PCMCIA driver level (see Lantern)
@@ -48,13 +55,11 @@ class TNetworkManager
 {
 public:
 	TNetworkManager(TLog* inLog);
-	
+
 	///
 	/// Destructor.
 	///
-	virtual ~TNetworkManager()
-	{
-	}
+	virtual ~TNetworkManager();
 
 	///
 	/// Set the interrupt manager.
@@ -62,22 +67,24 @@ public:
 	///
 	/// \param inManager	reference to the interrupt manager
 	///
-	void	SetInterruptManager( TInterruptManager* inManager )
+	void
+	SetInterruptManager(TInterruptManager* inManager)
 	{
 		mInterruptManager = inManager;
 	}
-	
+
 	///
 	/// Set the memory interface.
 	/// This method is called once the memory interface is created.
 	///
 	/// \param inManager	reference to the memory interface
 	///
-	void	SetMemory( TMemory* inMemory )
+	void
+	SetMemory(TMemory* inMemory)
 	{
 		mMemory = inMemory;
 	}
-	
+
 	///
 	/// Newton sends a block of data.
 	/// This is a raw ethernet network datagram. The network manager is expected
@@ -86,27 +93,27 @@ public:
 	/// \param data send this block of data from the Newton to the world
 	/// \param size of the block
 	///
-	virtual int SendPacket(KUInt8 *data, KUInt32 size) = 0;
-	
+	virtual int SendPacket(KUInt8* data, KUInt32 size) = 0;
+
 	///
 	/// Fill the buffer with the MAC address of the network card.
 	///
 	/// \param data pointer to a six byte buffer
 	/// \param size ethernet MAC addresses are always 6 bytes
 	///
-	virtual int GetDeviceAddress(KUInt8 *data, KUInt32 size) = 0;
-	
+	virtual int GetDeviceAddress(KUInt8* data, KUInt32 size) = 0;
+
 	///
 	/// Number of bytes available for Newton.
 	/// This number is polled on a regular base. If no block is available,
 	/// return 0. If a block of data is waiting, return the size of the raw
 	/// ethernet datagram. Do not split blocks of data unless you create a
-	/// complete raw ethernet datagramm for each of them.	
+	/// complete raw ethernet datagramm for each of them.
 	///
 	/// \return the number of bytes in the first block that is available for the Newton
 	///
 	virtual KUInt32 DataAvailable() = 0;
-	
+
 	///
 	/// Newton receives a block of data.
 	/// Copy the block that was received from the outside world into this buffer.
@@ -116,84 +123,125 @@ public:
 	/// \param data fill this buffer with the next available block of data
 	/// \param size the number of bytes that we expect in the buffer
 	///
-	virtual int ReceiveData(KUInt8 *data, KUInt32 size) = 0;
-	
+	virtual int ReceiveData(KUInt8* data, KUInt32 size) = 0;
+
 	///
 	/// Newton device driver timer expired.
 	///
-	virtual int TimerExpired() { return 0; }
+	virtual int
+	TimerExpired()
+	{
+		return 0;
+	}
 
-	TLog *GetLog() { return mLog; }
-	
-	void LogBuffer(KUInt8 *data, KUInt32 size);	
-	void LogPacket(KUInt8 *data, KUInt32 size);
-	void LogARPPacket(KUInt8 *data, KUInt32 size);
-	void LogIPv4Packet(KUInt8 *data, KUInt32 size);
-	void LogTCPPacket(KUInt8 *data, KUInt32 size);
-	void LogUDPPacket(KUInt8 *data, KUInt32 size);
-	//void LogPayload(KUInt8 *data, KUInt32 size, const char *d="");
-	
-	KUInt16 GetIPv4Checksum(KUInt8 *data, ssize_t size, bool set=0);
-	void SetIPv4Checksum(KUInt8 *data, ssize_t size) { GetIPv4Checksum(data, size, true); }
-	
-	KUInt16 GetTCPChecksum(KUInt8 *data, ssize_t size, bool set=0);
-	void SetTCPChecksum(KUInt8 *data, ssize_t size) { GetTCPChecksum(data, size, true); }
-	
-	KUInt16 GetUDPChecksum(KUInt8 *data, ssize_t size, bool set=0);
-	void SetUDPChecksum(KUInt8 *data, ssize_t size) { GetUDPChecksum(data, size, true); }
-	
+	TLog*
+	GetLog()
+	{
+		return mLog;
+	}
+
+	void LogBuffer(KUInt8* data, ssize_t size);
+	void LogPacket(KUInt8* data, ssize_t size);
+	void LogARPPacket(KUInt8* data, ssize_t size);
+	void LogIPv4Packet(KUInt8* data, ssize_t size);
+	void LogTCPPacket(KUInt8* data, ssize_t size);
+	void LogUDPPacket(KUInt8* data, ssize_t size);
+	// void LogPayload(KUInt8 *data, ssize_t size, const char *d="");
+
+	KUInt16 GetIPv4Checksum(KUInt8* data, ssize_t size, Boolean set = 0);
+	void
+	SetIPv4Checksum(KUInt8* data, ssize_t size)
+	{
+		GetIPv4Checksum(data, size, true);
+	}
+
+	KUInt16 GetTCPChecksum(KUInt8* data, ssize_t size, Boolean set = 0);
+	void
+	SetTCPChecksum(KUInt8* data, ssize_t size)
+	{
+		GetTCPChecksum(data, size, true);
+	}
+
+	KUInt16 GetUDPChecksum(KUInt8* data, ssize_t size, Boolean set = 0);
+	void
+	SetUDPChecksum(KUInt8* data, ssize_t size)
+	{
+		GetUDPChecksum(data, size, true);
+	}
+
 	///
 	/// Asynchronously wait for sockets to be readable and call IsReadyToRead in the async thread.
 	/// This function returns immediatly. The fd_set is copied.
 	///
-	void				AsyncWaitForReadyToRead(int nfds, const fd_set* inFDSet);
-	
+	void AsyncWaitForReadyToRead(int nfds, const fd_set* inFDSet);
+
 	///
 	/// Thread loop entry point.
 	/// Select on fds.
 	///
-	virtual void				Run( void );
-	
+	virtual void Run();
+
 protected:
 	///
 	/// Method called (from the thread) when a file descriptor of the set is read for reading.
 	/// Default implementation raises an interrupt on PCMCIA card 0 (FIXME: provide the socket number somehow).
 	///
-	virtual void		IsReadyToRead(fd_set* inFDSet);
-	
+	virtual void IsReadyToRead(fd_set* inFDSet);
+
 	///
 	/// Define the select fd set (in the thread).
 	/// Return the max fd + 1. If the result is 0, the thread exits.
 	///
-	virtual int			SetReadFDSet(fd_set* ioFDSet);
-	
-	TLog*				mLog;				///< Reference to the log.
-	TInterruptManager*	mInterruptManager;	///< Reference to the interrupt mgr.
-	TMemory*			mMemory;			///< Interface to the memory.	
+	virtual int SetReadFDSet(fd_set* ioFDSet);
+
+	TLog* mLog; ///< Reference to the log.
+	TInterruptManager* mInterruptManager; ///< Reference to the interrupt mgr.
+	TMemory* mMemory; ///< Interface to the memory.
 
 private:
-    TThread*			mThread;
-	TMutex*				mSelectMutex;
-	TCondVar*			mSelectCondVar;
-	int					mSelectNFDS;
-	fd_set				mSelectSet;
+	TThread* mThread;
+	TMutex* mSelectMutex;
+	TCondVar* mSelectCondVar;
+	int mSelectNFDS;
+	fd_set mSelectSet;
 };
 
-
-class TNullNetwork : public TNetworkManager
+class TNullNetworkManager : public TNetworkManager
 {
 public:
- 	TNullNetwork(TLog* inLog) : TNetworkManager(inLog) {}
-	virtual ~TNullNetwork() { }
-	virtual int SendPacket(KUInt8 *data, KUInt32 size) { return -1; }
-	virtual int GetDeviceAddress(KUInt8 *data, KUInt32 size) { return -1; }
-	virtual KUInt32 DataAvailable() { return 0; }
-	virtual int ReceiveData(KUInt8 *data, KUInt32 size) { return -1; }
+	TNullNetworkManager(TLog* inLog) :
+			TNetworkManager(inLog) { }
+	virtual ~TNullNetworkManager() { }
+	virtual int
+	SendPacket(KUInt8* data, KUInt32 size)
+	{
+		(void) data;
+		(void) size;
+		return -1;
+	}
+	virtual int
+	GetDeviceAddress(KUInt8* data, KUInt32 size)
+	{
+		(void) data;
+		(void) size;
+		return -1;
+	}
+	virtual KUInt32
+	DataAvailable()
+	{
+		return 0;
+	}
+	virtual int
+	ReceiveData(KUInt8* data, KUInt32 size)
+	{
+		(void) data;
+		(void) size;
+		return -1;
+	}
 };
 
-
 #endif
-		// _TNETWORKMANAGER_H
+// _TNETWORKMANAGER_H
 
 // ============================================ //
 // The first time, it's a KLUDGE!               //

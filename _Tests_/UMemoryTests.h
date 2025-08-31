@@ -2,12 +2,12 @@
 // Fichier:			UMemoryTests.h
 // Projet:			Einstein
 // Ecrit par:		Paul Guyot (pguyot@kallisys.net)
-// 
-// Créé le:			8/3/2005
+//
+// Cr√©√© le:			8/3/2005
 // Tabulation:		4 espaces
-// 
-// Copyright:		© 2005 by Paul Guyot.
-// 					Tous droits réservés pour tous pays.
+//
+// Copyright:		¬© 2005 by Paul Guyot.
+// 					Tous droits r√©serv√©s pour tous pays.
 // ===========
 // $Id: UMemoryTests.h 151 2006-01-13 16:15:33Z paul $
 // ===========
@@ -25,7 +25,7 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 151 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class UMemoryTests
 {
@@ -34,22 +34,22 @@ public:
 	/// Perform accesses that check both endianness and alignment with read
 	/// accesses.
 	///
-	static void ReadROMTest( TLog* inLog );
+	static void ReadROMTest(TLog* inLog);
 
 	///
 	/// Perform accesses that check both endianness and alignment with read
 	/// and write accesses.
 	///
-	static void ReadWriteRAMTest( TLog* inLog );
+	static void ReadWriteRAMTest(TLog* inLog);
 
 	///
 	/// Perform flash accesses.
 	///
-	static void FlashTest( TLog* inLog );
+	static void FlashTest(TLog* inLog);
 };
 
 #endif
-		// _UMEMORYTESTS_H
+// _UMEMORYTESTS_H
 
 // ===================================================================== //
 // "The eleventh commandment was `Thou Shalt Compute' or `Thou Shalt Not //

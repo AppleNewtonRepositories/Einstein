@@ -26,14 +26,15 @@
 
 #include <K/Defines/KDefinitions.h>
 
-#include "Emulator/Log/TBufferLog.h"
 #include "Emulator/JIT/JIT.h"
+#include "Emulator/Log/TBufferLog.h"
 
 class TEmulator;
 class TMemory;
 class TARMProcessor;
 class TInterruptManager;
 class TSymbolList;
+class UDisasm;
 
 // Logging types for PrintLine()
 
@@ -60,7 +61,7 @@ public:
 	/// Destructor.
 	///
 	virtual ~TMonitorCore();
-	
+
 	///
 	/// Output a line.
 	///
@@ -72,22 +73,23 @@ public:
 	/// \return false, if the script file was not found, or the result of
 	///         the script operations.
 	///
-	Boolean		ExecuteScript( const char* inScriptFile );
-	
+	Boolean ExecuteScript(const char* inScriptFile);
+
 	///
 	/// Execute a command.
 	///
 	/// \return true if the command was known.
 	///
-	virtual Boolean ExecuteCommand( const char* inCommand );
+	virtual Boolean ExecuteCommand(const char* inCommand);
 
 	/// \name Variables
-	TMemory*				mMemory;			///< Memory.
-	TSymbolList*			mSymbolList;		///< List of symbols.
+	TMemory* mMemory { nullptr }; ///< Memory.
+	TSymbolList* mSymbolList { nullptr }; ///< List of symbols.
+	UDisasm* mDisasm { nullptr }; ///< Disassembler
 };
 
 #endif
-		// _TMONITOR_CORE_H
+// _TMONITOR_CORE_H
 
 // ============================ //
 // All constants are variables. //

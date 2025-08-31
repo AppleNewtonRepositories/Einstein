@@ -2,32 +2,32 @@
 // Fichier:			TFileStream.h
 // Projet:			K
 // Ecrit par:		Paul Guyot (pguyot@kallisys.net)
-// 
-// Créé le:			11/6/2005
+//
+// Cr√©√© le:			11/6/2005
 // Tabulation:		4 espaces
-// 
+//
 // ***** BEGIN LICENSE BLOCK *****
 // Version: MPL 1.1
-// 
+//
 // The contents of this file are subject to the Mozilla Public License Version
 // 1.1 (the "License"); you may not use this file except in compliance with
 // the License. You may obtain a copy of the License at
 // http://www.mozilla.org/MPL/
-// 
+//
 // Software distributed under the License is distributed on an "AS IS" basis,
 // WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 // for the specific language governing rights and limitations under the
 // License.
-// 
+//
 // The Original Code is TFileStream.h.
-// 
+//
 // The Initial Developer of the Original Code is Paul Guyot.
 // Portions created by the Initial Developer are Copyright (C) 2005 the
 // Initial Developer. All Rights Reserved.
-// 
+//
 // Contributor(s):
 //   Paul Guyot <pguyot@kallisys.net> (original author)
-// 
+//
 // ***** END LICENSE BLOCK *****
 // ===========
 // $Id: TFileStream.h,v 1.1 2006/01/18 09:05:01 pguyot Exp $
@@ -48,11 +48,10 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 1.1 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class TFileStream
-	:
-		public TRandomAccessStream
+		: public TRandomAccessStream
 {
 public:
 	///
@@ -60,7 +59,7 @@ public:
 	/// If a problem occurs, an exception is thrown.
 	/// The file will be closed by the destructor.
 	///
-	TFileStream( const char* inPath, const char* inMode );
+	TFileStream(const char* inPath, const char* inMode);
 
 	///
 	/// Constructor from a FILE*.
@@ -68,13 +67,13 @@ public:
 	///
 	/// \param inFile	file to work with.
 	///
-	TFileStream( FILE* inFile );
+	TFileStream(FILE* inFile);
 
 	///
 	/// Destructor.
 	/// Closes the file if the constructor opened it.
 	///
-	virtual ~TFileStream( void );
+	virtual ~TFileStream(void);
 
 	/// \name Input/Output interface.
 
@@ -88,7 +87,7 @@ public:
 	///						occurred.
 	/// \throws an exception if a problem occurred.
 	///
-	virtual	void		Read( void* outBuffer, KUInt32* ioCount );
+	virtual void Read(void* outBuffer, KUInt32* ioCount);
 
 	///
 	/// Write some bytes.
@@ -100,14 +99,14 @@ public:
 	///						occurred.
 	/// \throws an exception if a problem occurred.
 	///
-	virtual	void		Write( const void* inBuffer, KUInt32* ioCount );
+	virtual void Write(const void* inBuffer, KUInt32* ioCount);
 
 	///
 	/// Flush the output buffer.
 	///
 	/// \throws an exception if a problem occurred.
 	///
-	virtual void		FlushOutput( void );
+	virtual void FlushOutput(void);
 
 	///
 	/// Get next byte without advancing the cursor.
@@ -115,7 +114,7 @@ public:
 	/// \return the byte read.
 	/// \throws an exception if a problem occurred (including EOF).
 	///
-	virtual	KUInt8		PeekByte( void );
+	virtual KUInt8 PeekByte(void);
 
 	///
 	/// Determine the position of the cursor in the stream.
@@ -123,7 +122,7 @@ public:
 	/// \return the position from the start of the stream.
 	/// \throws an exception if the operation isn't supported.
 	///
-	virtual KSInt64 	GetCursor( void ) const;
+	virtual KSInt64 GetCursor(void) const;
 
 	///
 	/// Move the cursor in the stream.
@@ -135,7 +134,7 @@ public:
 	///			was reached.
 	/// \throws an exception if the operation isn't supported.
 	///
-	virtual void 		SetCursor( KSInt64 inPos, ECursorMode inMode );
+	virtual void SetCursor(KSInt64 inPos, ECursorMode inMode);
 
 	/// \name Information interface.
 
@@ -145,17 +144,17 @@ public:
 	/// \param inPath	file to check for
 	/// \return true if the file exists
 	///
-	static bool			Exists( const char *inPath );
+	static bool Exists(const char* inPath);
 
 private:
 	/// \name Variables
-	FILE*		mFile;				///< Pointer to the file.
-	Boolean		mWeOpenedTheFile;	///< If we opened the file (and if we should
-									///< close it).
+	FILE* mFile; ///< Pointer to the file.
+	Boolean mWeOpenedTheFile; ///< If we opened the file (and if we should
+							  ///< close it).
 };
 
 #endif
-		// _TFILESTREAM_H
+// _TFILESTREAM_H
 
 // ======================================================================== //
 // Our informal mission is to improve the love life of operators worldwide. //

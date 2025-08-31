@@ -1,25 +1,50 @@
-# Serial CMakeLists.txt
+#
+# Add source files required to build Einstein.
+#
 
-# Only this one compiles for now ...
-set(sources TSerialPortManager.cp)
+list ( APPEND cmake_sources
+	Emulator/Serial/CMakeLists.txt
+)
 
-# TODO virtual serial port
+list ( APPEND common_sources
+	Emulator/Serial/TTcpClientSerialPortManager.cpp
+	Emulator/Serial/TTcpClientSerialPortManager.h
+	Emulator/Serial/TBasicSerialPortManager.cpp
+	Emulator/Serial/TBasicSerialPortManager.h
+	Emulator/Serial/TSerialPortManager.cpp
+	Emulator/Serial/TSerialPortManager.h
+	Emulator/Serial/TSerialPorts.cpp
+	Emulator/Serial/TSerialPorts.h
+)
 
-if(${UNIX})
-    if (${APPLE})
-        set (sources ${sources} TBasicSerialPortManager.cp)
-    endif()
-endif()
-
-
-set_source_files_properties(${sources} PROPERTIES LANGUAGE CXX)
-
-add_library(serial STATIC ${sources})
-
-target_include_directories(serial PUBLIC
-    ../
-    ../../
-    ../../app/
-    )
-
-target_link_libraries(serial k)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+	list (APPEND common_sources
+		Emulator/Serial/TSerialHostPort.h
+		Emulator/Serial/TSerialHostPortDirect.h
+		Emulator/Serial/TSerialHostPortDirect.cpp
+		Emulator/Serial/TSerialHostPortPTY.h
+		Emulator/Serial/TSerialHostPortPTY.cpp
+		Emulator/Serial/TBasiliskIISerialPortManager.cpp
+		Emulator/Serial/TBasiliskIISerialPortManager.h
+		Emulator/Serial/TPipesSerialPortManager.cpp
+		Emulator/Serial/TPipesSerialPortManager.h
+		Emulator/Serial/TPtySerialPortManager.cpp
+		Emulator/Serial/TPtySerialPortManager.h
+	)
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "OpenBSD")
+	list (APPEND common_sources
+		Emulator/Serial/TSerialHostPort.h
+		Emulator/Serial/TSerialHostPortDirect.h
+		Emulator/Serial/TSerialHostPortDirect.cpp
+		Emulator/Serial/TSerialHostPortPTY.h
+		Emulator/Serial/TSerialHostPortPTY.cpp
+		Emulator/Serial/TBasiliskIISerialPortManager.cpp
+		Emulator/Serial/TBasiliskIISerialPortManager.h
+		Emulator/Serial/TPipesSerialPortManager.cpp
+		Emulator/Serial/TPipesSerialPortManager.h
+		Emulator/Serial/TPtySerialPortManager.cpp
+		Emulator/Serial/TPtySerialPortManager.h
+	)
+elseif (WIN32)
+	# no additional drivers
+endif ()

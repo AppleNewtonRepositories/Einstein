@@ -2,12 +2,12 @@
 // Fichier:			UProcessorTests.h
 // Projet:			Einstein
 // Ecrit par:		Paul Guyot (pguyot@kallisys.net)
-// 
-// Créé le:			27/7/2004
+//
+// Cr√©√© le:			27/7/2004
 // Tabulation:		4 espaces
-// 
-// Copyright:		© 2004 by Paul Guyot.
-// 					Tous droits réservés pour tous pays.
+//
+// Copyright:		¬© 2004 by Paul Guyot.
+// 					Tous droits r√©serv√©s pour tous pays.
 // ===========
 // $Id: UProcessorTests.h 147 2005-09-29 20:17:58Z paul $
 // ===========
@@ -19,13 +19,18 @@
 #include <Emulator/Log/TLog.h>
 #include <Emulator/Log/TStdOutLog.h>
 
+// C++
+#include <functional>
+
+class TARMProcessor;
+
 ///
 /// Class for tests relative to the processor.
 ///
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 147 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 class UProcessorTests
 {
@@ -36,7 +41,16 @@ public:
 	///
 	/// \param inHexWord	instruction (as hexa) to execute.
 	///
-	static void ExecuteInstruction( const char* inHexWord, TLog* inLog );
+	static void ExecuteInstruction(const char* inHexWord, TLog* inLog);
+
+	///
+	/// Execute an instruction and run a test handler with the processor afterwards.
+	/// The processor is set in boot state.
+	///
+	/// \param inInstruction	instruction to execute.
+	/// \param inTestFunction	function to assert results.
+	///
+	static void ExecuteInstruction(KUInt32 inInstruction, std::function<void(TARMProcessor& proc)> inTestFunction, TLog* inLog = nullptr);
 
 	///
 	/// Execute an instruction and print the registers afterwards.
@@ -44,7 +58,16 @@ public:
 	///
 	/// \param inHexWord	instruction (as hexa) to execute.
 	///
-	static void ExecuteInstructionState1( const char* inHexWord, TLog* inLog );
+	static void ExecuteInstructionState1(const char* inHexWord, TLog* inLog);
+
+	///
+	/// Execute an instruction and run a test handler with the processor afterwards.
+	/// The processor is set in some random (actually fixed) state.
+	///
+	/// \param inInstruction	instruction to execute.
+	/// \param inTestFunction	function to assert results.
+	///
+	static void ExecuteInstructionState1(KUInt32 inInstruction, std::function<void(TARMProcessor& proc)> inTestFunction, TLog* inLog = nullptr);
 
 	///
 	/// Execute an instruction and print the registers afterwards.
@@ -52,32 +75,60 @@ public:
 	///
 	/// \param inHexWord	instruction (as hexa) to execute.
 	///
-	static void ExecuteInstructionState2( const char* inHexWord, TLog* inLog );
+	static void ExecuteInstructionState2(const char* inHexWord, TLog* inLog);
+
+	///
+	/// Execute an instruction and print the registers afterwards.
+	/// The processor is set in some random (actually fixed) state.
+	///
+	/// \param inInstruction	instruction to execute.
+	/// \param inTestFunction	function to assert results.
+	/// \param inLog            log to initialize memory and processor.
+	///
+	static void ExecuteInstructionState2(KUInt32 inInstruction, std::function<void(TARMProcessor& proc)> inTestFunction, TLog* inLog = nullptr);
 
 	///
 	/// Execute two instructions and print the registers afterwards.
 	///
 	/// \param inHexWord	instructions (as hexa) to execute.
+	/// \param inLog        log to print registers to.
 	///
-	static void ExecuteTwoInstructions( const char* inHexWords, TLog* inLog );
-	
+	static void ExecuteTwoInstructions(const char* inHexWords, TLog* inLog);
+
+	///
+	/// Execute two instructions and print the registers afterwards.
+	///
+	/// \param inInstruction1	first instruction to execute.
+	/// \param inInstruction2	second instruction to execute.
+	/// \param inTestFunction	function to assert results.
+	/// \param inLog            log to initialize memory and processor.
+	///
+	static void ExecuteTwoInstructions(KUInt32 inInstruction1, KUInt32 inInstruction2, std::function<void(TARMProcessor& proc)> inTestFunction, TLog* inLog = nullptr);
+
 	///
 	/// Run code (until TEmulator::Run() returns, typically after a breakpoint)
 	///
 	/// \param inHexWord	instructions (as hexa) to execute.
 	///
-	static void RunCode( const char* inHexWords, TLog* inLog );
+	static void RunCode(const char* inHexWords, TLog* inLog);
+
+	///
+	/// Run code (until TEmulator::Run() returns, typically after a breakpoint)
+	///
+	/// \param inHexWord	instructions (as hexa) to execute.
+	///
+	static void RunCode(const char* inHexWords, std::function<void(TARMProcessor& proc)> inTestFunction, TLog* inLog = nullptr);
 
 	///
 	/// Step into the ROM (found at ../../_Data_/717006)
 	///
 	/// \param inCount  number of steps to perform.
 	///
-	static void Step( const char* inCount, TLog* inLog );
+	static void Step(const char* inCount, TLog* inLog);
 };
 
 #endif
-		// _UPROCESSORTESTS_H
+// _UPROCESSORTESTS_H
 
 // =============================================================================== //
 // Norbert Weiner was the subject of many dotty professor stories.  Weiner was, in //

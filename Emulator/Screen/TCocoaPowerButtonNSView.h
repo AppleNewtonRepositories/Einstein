@@ -24,14 +24,12 @@
 #ifndef _TCOCOAPOWERBUTTONNSVIEW_H
 #define _TCOCOAPOWERBUTTONNSVIEW_H
 
-#include <K/Defines/KDefinitions.h>
 #import <Cocoa/Cocoa.h>
 
 class TCocoaScreenManager;
 
-@interface TCocoaPowerButtonNSView : NSView
-{
-	TCocoaScreenManager*	mScreenManager;
+@interface TCocoaPowerButtonNSView : NSView {
+	TCocoaScreenManager* mScreenManager;
 }
 
 // Initialisation.
@@ -39,11 +37,11 @@ class TCocoaScreenManager;
 
 // Mouse events.
 - (BOOL)mouseDownCanMoveWindow;
-- (void)mouseDown:(NSEvent *)theEvent;
+- (void)mouseDown:(NSEvent*)theEvent;
 @end
 
 #endif
-		// _TCOCOAPOWERBUTTONNSVIEW_H
+// _TCOCOAPOWERBUTTONNSVIEW_H
 
 // ====================================================================== //
 // This quote is taken from the Diamondback, the University of Maryland   //

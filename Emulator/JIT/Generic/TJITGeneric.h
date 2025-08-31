@@ -25,29 +25,26 @@
 #define _TJITGENERIC_H
 
 #include <K/Defines/KDefinitions.h>
-#include "TJIT.h"
+#include "Emulator/JIT/TJIT.h"
 
 // Einstein
-#include "TJITGenericPage.h"
+#include "Emulator/JIT/Generic/TJITGenericPage.h"
 #include "Emulator/JIT/Generic/TJITGenericROMPatch.h"
 
 class TMemory;
 class TARMProcessor;
 union JITUnit;
 
-
-const KSInt32 kNotTheSamePage	= 0x7f000001;
-const KSInt32 kOffsetUnknown	= 0x7f000000;
+const KSInt32 kNotTheSamePage = 0x7f000001;
+const KSInt32 kOffsetUnknown = 0x7f000000;
 
 ///
 /// Class for generic JIT interface.
 ///
 class TJITGeneric
-	:
-		public TJIT< TJITGeneric, TJITGenericPage >
+		: public TJIT<TJITGeneric, TJITGenericPage>
 {
 public:
-	
 	///
 	/// Constructor from interfaces to memory and MMU.
 	///
@@ -56,22 +53,22 @@ public:
 	///
 	TJITGeneric(
 		TMemory* inMemoryIntf,
-		TMMU* inMMUIntf );
-	
+		TMMU* inMMUIntf);
+
 	///
 	/// Destructor.
 	///
-	virtual ~TJITGeneric( void );
-	
+	virtual ~TJITGeneric(void);
+
 	///
 	/// One or more steps with JIT.
 	///
 	/// \param ioObject			ARM CPU.
 	/// \param inCount			number of instructions to execute.
 	///
-	virtual void	Step(
-						TARMProcessor* ioObject,
-						KUInt32 inCount );
+	virtual void Step(
+		TARMProcessor* ioObject,
+		KUInt32 inCount);
 
 	///
 	/// Run with JIT.
@@ -80,27 +77,27 @@ public:
 	/// \param inSignal			pointer to a signal set to false to stop
 	///							execution.
 	///
-	virtual void	Run(
-						TARMProcessor* ioObject,
-						volatile bool* inSignal );
+	virtual void Run(
+		TARMProcessor* ioObject,
+		volatile Boolean* inSignal);
 
 	///
 	/// Get a JIT unit for a given PC.
 	///
 	JITUnit* GetJITUnitForPC(
-					TARMProcessor* ioCPU,
-					TMemory* inMemoryInterface,
-					KUInt32 inPC );
+		TARMProcessor* ioCPU,
+		TMemory* inMemoryInterface,
+		KUInt32 inPC);
 
 	///
 	/// Get the offset between the current JIT unit and the JIT unit for the new PC
 	/// \return kNotTheSamePage if the units are not on the same page
 	///
 	KSInt32 GetJITUnitDelta(
-							TARMProcessor* ioCPU,
-							TMemory* inMemoryInterface,
-							JITUnit* inUnit,
-							KUInt32 inPC);
+		TARMProcessor* ioCPU,
+		TMemory* inMemoryInterface,
+		JITUnit* inUnit,
+		KUInt32 inPC);
 
 	///
 	/// ID and version for patches.
@@ -114,34 +111,34 @@ public:
 	/// This function is called to modify the ROM before it is saved on disk.
 	/// It is only called when the image is created.
 	///
-	static void DoPatchROM(KUInt32* romPtr, const std::string& inMachineName);
-	
+	static void DoPatchROM(KUInt32* romPtr, KSInt32 inROMId);
+
 private:
 	///
 	/// Constructeur par copie volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TJITGeneric( const TJITGeneric& inCopy );
+	TJITGeneric(const TJITGeneric& inCopy);
 
 	///
-	/// Opérateur d'assignation volontairement indisponible.
+	/// Op√©rateur d'assignation volontairement indisponible.
 	///
-	/// \param inCopy		objet à copier
+	/// \param inCopy		objet √† copier
 	///
-	TJITGeneric& operator = ( const TJITGeneric& inCopy );
+	TJITGeneric& operator=(const TJITGeneric& inCopy);
 
 	enum {
-		kPoolSize = 512,	///< 512 pages in pool.
+		kPoolSize = 512, ///< 512 pages in pool.
 	};
-	
+
 	/// \name Variables
-	
-	TJITGenericPage*	mPagesPool;	///< Array with all the pages.
+
+	TJITGenericPage* mPagesPool; ///< Array with all the pages.
 };
 
 #endif
-		// _TJITGENERIC_H
+// _TJITGENERIC_H
 
 // ====================================================================== //
 // A complex system that works is invariably found to have evolved from a //

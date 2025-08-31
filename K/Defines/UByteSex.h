@@ -2,7 +2,7 @@
 // Fichier:			UByteSex.h
 // Projet:			K
 //
-// Créé le:			13/01/2002
+// Cr√©√© le:			13/01/2002
 // Tabulation:		4 espaces
 //
 // ***** BEGIN LICENSE BLOCK *****
@@ -42,7 +42,7 @@
 #endif
 
 ///
-/// Classe pour gérer le sexe des octets.
+/// Classe pour g√©rer le sexe des octets.
 ///
 /// Convertit des mots de grand indien vers petit indien et inversement.
 /// Fournit des macros pour faire la conversion selon la plateforme.
@@ -57,59 +57,58 @@ public:
 	/// Echange les deux octets d'un mot de 16 bits.
 	/// XXYY -> YYXX
 	///
-	/// \param inWord	mot de 16 bits en entrée.
-	/// \return le mot de 16 bits inversé.
+	/// \param inWord	mot de 16 bits en entr√©e.
+	/// \return le mot de 16 bits invers√©.
 	///
-	static inline KUInt16	Swap( const KUInt16 inWord )
-		{
+	static inline KUInt16
+	Swap(const KUInt16 inWord)
+	{
 #if TARGET_OS_OPENSTEP
-			return OSSwapInt16((UInt16) inWord);
+		return OSSwapInt16((UInt16) inWord);
 #elif TARGET_RT_LITTLE_ENDIAN && TARGET_OS_COMPAT_POSIX
-			return (KUInt16) htons((uint16_t) inWord);
+		return (KUInt16) htons((uint16_t) inWord);
 #else
-			return (KUInt16) ((inWord << 8) | (inWord >> 8));
+		return (KUInt16) ((inWord << 8) | (inWord >> 8));
 #endif
-		}
+	}
 
 	///
 	/// Echange les octets d'un mot de 32 bits.
 	/// XXYYZZTT -> TTZZYYXX
 	///
-	/// \param inWord	mot de 32 bits en entrée.
-	/// \return le mot de 32 bits inversé.
+	/// \param inWord	mot de 32 bits en entr√©e.
+	/// \return le mot de 32 bits invers√©.
 	///
-	static inline KUInt32	Swap( const KUInt32 inWord )
-		{
+	static inline KUInt32
+	Swap(const KUInt32 inWord)
+	{
 #if TARGET_OS_OPENSTEP
-			return OSSwapInt32((UInt32) inWord);
+		return OSSwapInt32((UInt32) inWord);
 #elif TARGET_RT_LITTLE_ENDIAN && TARGET_OS_COMPAT_POSIX
-			return (KUInt32) htonl((uint32_t) inWord);
+		return (KUInt32) htonl((uint32_t) inWord);
 #else
-			return (
-					((inWord >> 24)	& 0x000000FF) | 
-					((inWord >> 8)	& 0x0000FF00) | 
-					((inWord << 8)	& 0x00FF0000) | 
-					((inWord << 24)	& 0xFF000000));
+		return (
+			((inWord >> 24) & 0x000000FF) | ((inWord >> 8) & 0x0000FF00) | ((inWord << 8) & 0x00FF0000) | ((inWord << 24) & 0xFF000000));
 #endif
-		}
+	}
 
 #if TARGET_RT_LITTLE_ENDIAN
-	// Macros pour une plateforme en petit indien
-	#define	UByteSex_FromBigEndian( inWord )	( UByteSex::Swap( inWord ) )
-	#define	UByteSex_FromLittleEndian( inWord )	( inWord )
-	#define	UByteSex_ToBigEndian( inWord )		( UByteSex::Swap( inWord ) )
-	#define	UByteSex_ToLittleEndian( inWord )	( inWord )
+// Macros pour une plateforme en petit indien
+#define UByteSex_FromBigEndian(inWord) (UByteSex::Swap(inWord))
+#define UByteSex_FromLittleEndian(inWord) (inWord)
+#define UByteSex_ToBigEndian(inWord) (UByteSex::Swap(inWord))
+#define UByteSex_ToLittleEndian(inWord) (inWord)
 #else
 	// Macros pour une plateforme en grand indien
-	#define	UByteSex_FromBigEndian( inWord )	( inWord )
-	#define	UByteSex_FromLittleEndian( inWord )	( UByteSex::Swap( inWord ) )
-	#define	UByteSex_ToBigEndian( inWord )		( inWord )
-	#define	UByteSex_ToLittleEndian( inWord )	( UByteSex::Swap( inWord ) )
+#define UByteSex_FromBigEndian(inWord) (inWord)
+#define UByteSex_FromLittleEndian(inWord) (UByteSex::Swap(inWord))
+#define UByteSex_ToBigEndian(inWord) (inWord)
+#define UByteSex_ToLittleEndian(inWord) (UByteSex::Swap(inWord))
 #endif
 };
 
 #endif
-		// _UBYTESEX_H
+// _UBYTESEX_H
 
 // ====================== //
 // Disks travel in packs. //

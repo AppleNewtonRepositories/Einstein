@@ -1,16 +1,16 @@
-# Platform CMakeLists
+#
+# Add source files required to build Einstein.
+#
 
-file(GLOB headers *.h)
-file(GLOB sources *.cp)
+list ( APPEND cmake_sources
+	Emulator/Platform/CMakeLists.txt
+)
 
-set_source_files_properties(${sources} PROPERTIES LANGUAGE CXX)
-
-add_library(platform STATIC ${sources})
-target_include_directories(platform PUBLIC
-    ../
-    ../JIT/
-    ../JIT/Generic
-    ../../
-    )
-
-target_link_libraries(platform host pcmcia k)
+list ( APPEND common_sources
+	Emulator/Platform/PlatformEvents.h
+	Emulator/Platform/PlatformGestalt.h
+	Emulator/Platform/TNewt.cpp
+	Emulator/Platform/TNewt.h
+	Emulator/Platform/TPlatformManager.cpp
+	Emulator/Platform/TPlatformManager.h
+)

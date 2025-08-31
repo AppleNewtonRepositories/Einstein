@@ -1,16 +1,12 @@
-# Files CMakeLists.txt
+#
+# Add source files required to build Einstein.
+#
 
-file(GLOB headers *.h)
-file(GLOB sources *.cp)
+list ( APPEND cmake_sources
+	Emulator/Files/CMakeLists.txt
+)
 
-set_source_files_properties(${sources} PROPERTIES LANGUAGE CXX)
-
-add_library(files STATIC ${sources})
-target_include_directories(files PUBLIC
-    ../
-    ../JIT/
-    ../JIT/Generic
-    ../../
-    )
-
-target_link_libraries(files k)
+list ( APPEND common_sources
+	Emulator/Files/TFileManager.cpp
+	Emulator/Files/TFileManager.h
+)

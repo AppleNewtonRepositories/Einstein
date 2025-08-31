@@ -33,17 +33,17 @@
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision$
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
 @protocol CocoaEmulatorApp
-- (void) powerChange: (BOOL) state;
-- (void) backlightChange: (BOOL) state;
-- (void) networkChange: (BOOL) state;
-- (void) setEmulatorWindow: (NSWindow*) inWindow fullScreen: (BOOL) inFullScreen;
+- (void)powerChange:(BOOL)state;
+- (void)backlightChange:(BOOL)state;
+- (void)networkChange:(BOOL)state;
+- (void)setEmulatorWindow:(NSWindow*)inWindow fullScreen:(BOOL)inFullScreen;
 @end
 
 #endif
-		// _COCOAEMULATORAPP_H
+// _COCOAEMULATORAPP_H
 
 // ============================================================================= //
 // ===  ALL USERS PLEASE NOTE  ========================                          //

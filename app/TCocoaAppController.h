@@ -27,18 +27,17 @@
 #include <K/Defines/KDefinitions.h>
 #import <Cocoa/Cocoa.h>
 
-#import "Emulator/Screen/TCocoaScreenView.h"
-#import "Emulator/Screen/CocoaScreenProxy.h"
-#import "Emulator/Screen/CocoaEmulatorApp.h"
+#import "TCocoaMonitorController.h"
 #import "TCocoaROMDumperController.h"
 #import "TCocoaSetupController.h"
-#import "TCocoaMonitorController.h"
+#import "Emulator/Screen/CocoaEmulatorApp.h"
+#import "Emulator/Screen/CocoaScreenProxy.h"
+#import "Emulator/Screen/TCocoaScreenView.h"
 
 class TBufferLog;
 class TNetworkManager;
 class TSoundManager;
 class TScreenManager;
-class TSerialPortManager;
 class TROMImage;
 class TEmulator;
 class TPlatformManager;
@@ -48,54 +47,52 @@ class TSymbolList;
 class TFileManager;
 
 ///
-/// Protocol pour le contrôleur de l'application Einstein.app.
+/// Protocol pour le contr√¥leur de l'application Einstein.app.
 ///
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 151 $
 ///
-/// \test	aucun test défini.
+/// \test	aucun test d√©fini.
 ///
-@interface TCocoaAppController : NSObject <CocoaEmulatorApp, NSApplicationDelegate, NSToolbarDelegate, NSFileManagerDelegate>
-{
+@interface TCocoaAppController : NSObject <CocoaEmulatorApp, NSApplicationDelegate, NSToolbarDelegate, NSFileManagerDelegate> {
 	IBOutlet NSMenu* mMenuBar;
 	IBOutlet TCocoaSetupController* mSetupController;
 	IBOutlet TCocoaROMDumperController* mROMDumperController;
 	IBOutlet TCocoaMonitorController* mMonitorController;
 	IBOutlet NSUserDefaultsController* mUserDefaultsController;
-	
-	CocoaScreenProxy*	mProxy;
-	
-	Boolean				mQuit;
-	int					mRAMSize;
-	NSString*			mFlashPath;
-	NSString*			mROMPath;
-	NSString*			mREx0Path;
-  
-	TNetworkManager*	mNetworkManager;
-	TSoundManager*		mSoundManager;
-	TScreenManager*		mScreenManager;
-	TSerialPortManager* mExtrSerialPortManager;
-	TROMImage*			mROMImage;
-	TEmulator*			mEmulator;
-	TPlatformManager*	mPlatformManager;
-	TFileManager*       mFileManager;
-    TLog*				mLog;
-	TMacMonitor*		mMonitor;
-	TBufferLog*			mMonitorLog;
-	TSymbolList*		mSymbolList;
-	
-	NSToolbarItem*		mToolbarPowerItem;
-	NSImage*			mToolbarPowerOnImage;
-	NSImage*			mToolbarPowerOffImage;
-	BOOL				mPowerState;
-	NSToolbarItem*		mToolbarBacklightItem;
-	NSImage*			mToolbarBacklightOnImage;
-	NSImage*			mToolbarBacklightOffImage;
-	BOOL				mBacklightState;
-	NSToolbarItem*		mToolbarNetworkItem;
-	NSImage*			mToolbarNetworkOnImage;
-	NSImage*			mToolbarNetworkOffImage;
-	BOOL				mNetworkState;
+
+	CocoaScreenProxy* mProxy;
+
+	Boolean mQuit;
+	int mRAMSize;
+	NSString* mFlashPath;
+	NSString* mROMPath;
+	NSString* mREx0Path;
+
+	TNetworkManager* mNetworkManager;
+	TSoundManager* mSoundManager;
+	TScreenManager* mScreenManager;
+	TROMImage* mROMImage;
+	TEmulator* mEmulator;
+	TPlatformManager* mPlatformManager;
+	TFileManager* mFileManager;
+	TLog* mLog;
+	TMacMonitor* mMonitor;
+	TBufferLog* mMonitorLog;
+	TSymbolList* mSymbolList;
+
+	NSToolbarItem* mToolbarPowerItem;
+	NSImage* mToolbarPowerOnImage;
+	NSImage* mToolbarPowerOffImage;
+	BOOL mPowerState;
+	NSToolbarItem* mToolbarBacklightItem;
+	NSImage* mToolbarBacklightOnImage;
+	NSImage* mToolbarBacklightOffImage;
+	BOOL mBacklightState;
+	NSToolbarItem* mToolbarNetworkItem;
+	NSImage* mToolbarNetworkOnImage;
+	NSImage* mToolbarNetworkOffImage;
+	BOOL mNetworkState;
 }
 
 // Initialize.
@@ -139,7 +136,7 @@ class TFileManager;
 @end
 
 #endif
-		// _TCOCOAAPPCONTROLLER_H
+// _TCOCOAAPPCONTROLLER_H
 
 // ============================================================== //
 // As of next Thursday, UNIX will be flushed in favor of TOPS-10. //

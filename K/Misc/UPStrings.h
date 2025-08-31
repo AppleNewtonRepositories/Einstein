@@ -36,63 +36,63 @@
 #include <K/Defines/KDefinitions.h>
 
 ///
-/// Classe d'utilitaires pour g�rer les cha�nes au format pascal utilis� sous MacOS.
+/// Classe d'utilitaires pour gérer les chaînes au format pascal utilisé sous MacOS.
 ///
 /// \author Paul Guyot <pguyot@kallisys.net>
 /// \version $Revision: 1.4 $
 ///
-/// \test	aucun test d�fini.
+/// \test	aucun test défini.
 ///
 class UPStrings
 {
 public:
 	///
-	/// Conversion d'une cha�ne pascal en une cha�ne C.
+	/// Conversion d'une chaîne pascal en une chaîne C.
 	///
-	/// \param outDestString	m�moire tampon pour mettre le r�sultat
-	/// \param inSourceString	cha�ne Pascal � convertir
-	/// \param inMaxLength		taille maximale de la cha�ne en caract�re (taille
+	/// \param outDestString	mémoire tampon pour mettre le résultat
+	/// \param inSourceString	chaîne Pascal à convertir
+	/// \param inMaxLength		taille maximale de la chaîne en caractère (taille
 	///							de outDestString moins 1)
 	///
-	static void		P2CStrCopy(
-						char* outDestString,
-						ConstStr255Param inSourceString,
-						long inMaxLength = 255 );
+	static void P2CStrCopy(
+		char* outDestString,
+		ConstStr255Param inSourceString,
+		long inMaxLength = 255);
 
 	///
-	/// Conversion d'une cha�ne C en une cha�ne pascal.
+	/// Conversion d'une chaîne C en une chaîne pascal.
 	///
-	/// \param outDestString	m�moire tampon pour mettre le r�sultat
-	/// \param inSourceString	cha�ne C � convertir
-	/// \param inMaxLength		taille maximale de la cha�ne en caract�re (taille
+	/// \param outDestString	mémoire tampon pour mettre le résultat
+	/// \param inSourceString	chaîne C à convertir
+	/// \param inMaxLength		taille maximale de la chaîne en caractère (taille
 	///							de outDestString moins 1)
 	///
-	static void		C2PStrCopy(
-						Str255 outDestString,
-						const char* inSourceString,
-						long inMaxLength = 255 );
+	static void C2PStrCopy(
+		Str255 outDestString,
+		const char* inSourceString,
+		long inMaxLength = 255);
 
 	///
-	/// Conversion sur place d'une cha�ne pascal en une cha�ne C.
-	/// La cha�ne pass�e en entr�e est modifi�e.
+	/// Conversion sur place d'une chaîne pascal en une chaîne C.
+	/// La chaîne passée en entrée est modifiée.
 	///
-	/// \param ioString			cha�ne Pascal � convertir
-	/// \return un pointeur sur la cha�ne, d�sormais au format C.
+	/// \param ioString			chaîne Pascal à convertir
+	/// \return un pointeur sur la chaîne, désormais au format C.
 	///
-	static char*			P2CStr( Str255 ioString );
+	static char* P2CStr(Str255 ioString);
 
 	///
-	/// Conversion sur place d'une cha�ne C en une cha�ne pascal.
-	/// La cha�ne pass�e en entr�e est modifi�e.
+	/// Conversion sur place d'une chaîne C en une chaîne pascal.
+	/// La chaîne passée en entrée est modifiée.
 	///
-	/// \param ioString			cha�ne C � convertir
-	/// \return un pointeur sur la cha�ne, d�sormais au format pascal.
+	/// \param ioString			chaîne C à convertir
+	/// \return un pointeur sur la chaîne, désormais au format pascal.
 	///
-	static unsigned char*	C2PStr( char* ioString );
+	static unsigned char* C2PStr(char* ioString);
 };
 
 #endif
-		// __UPSTRINGS__
+// __UPSTRINGS__
 
 // =========================== //
 // /* Halley */                //

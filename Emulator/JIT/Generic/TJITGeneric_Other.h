@@ -25,33 +25,33 @@
 #define _TJITGENERIC_OTHER_H
 
 #include <K/Defines/KDefinitions.h>
-#include "JIT.h"
+#include "Emulator/JIT/JIT.h"
 
 // Einstein
-#include "TARMProcessor.h"
+#include "Emulator/TARMProcessor.h"
 
-#include "TJITGeneric_Macros.h"
+#include "Emulator/JIT/Generic/TJITGeneric_Macros.h"
 
 KUInt32
 Translate_PatchNativeCall(
-					JITPageClass* inPage,
-					KUInt16* ioUnitCrsr,
-					KUInt32 inInstruction,
-					KUInt32 inVAddr );
+	JITPageClass* inPage,
+	KUInt16* ioUnitCrsr,
+	KUInt32 inInstruction,
+	KUInt32 inVAddr);
 
 void
 Translate_SWIAndCoproc(
-					   JITPageClass* inPage,
-					   KUInt16* ioUnitCrsr,
-					   KUInt32 inInstruction,
-					   KUInt32 inVAddr );
+	JITPageClass* inPage,
+	KUInt16* ioUnitCrsr,
+	KUInt32 inInstruction,
+	KUInt32 inVAddr);
 
 void
 Translate_Branch(
-					JITPageClass* inPage,
-					KUInt16* ioUnitCrsr,
-					KUInt32 inInstruction,
-					KUInt32 inVAddr );
+	JITPageClass* inPage,
+	KUInt16* ioUnitCrsr,
+	KUInt32 inInstruction,
+	KUInt32 inVAddr);
 
 JITInstructionProto(SystemBootUND);
 JITInstructionProto(DebuggerUND);
@@ -61,7 +61,7 @@ JITInstructionProto(UndefinedInstruction);
 JITInstructionProto(SoftwareBreakpoint);
 
 #endif
-		// _TJITGENERIC_OTHER_H
+// _TJITGENERIC_OTHER_H
 
 // =========================== //
 // System checkpoint complete. //

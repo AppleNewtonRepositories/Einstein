@@ -42,12 +42,11 @@ public:
 		ksymcmp__FPcT1,
 	};
 
-	static void DoPatchROM(KUInt32* romPtr, const std::string& inMachineName);
-
+	static void DoPatchROM(KUInt32* romPtr, KSInt32 inROMId);
 };
 
 #endif
-		// _TVIRTUALIZEDCALLSPATCHES_H
+// _TVIRTUALIZEDCALLSPATCHES_H
 
 // ========================================================================== //
 // No proper program contains an indication which as an operator-applied      //

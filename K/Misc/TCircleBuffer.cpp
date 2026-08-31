@@ -235,6 +235,84 @@ TCircleBuffer::Consume(void* outBuffer, KUIntPtr inAmount)
 	return amount;
 }
 
+// -------------------------------------------------------------------------- //
+//  * Peek( void*, KUIntPtr )
+// -------------------------------------------------------------------------- //
+KUIntPtr
+TCircleBuffer::Peek(void* outBuffer, KUIntPtr inAmount)
+{
+	KUIntPtr amount = inAmount;
+
+	// Copy data.
+	if (mConsumerCrsr <= mProducerCrsr)
+	{
+		// ---C123P---
+		KUIntPtr max = mProducerCrsr - mConsumerCrsr;
+		if (amount > max)
+		{
+			amount = max;
+		}
+
+		(void) ::memcpy(
+			outBuffer,
+			(const void*) (mBuffer + mConsumerCrsr),
+			amount);
+	} else
+	{
+		// 456P---C123
+		KUIntPtr max = mBufferSize + mProducerCrsr - mConsumerCrsr;
+		if (amount > max)
+		{
+			amount = max;
+		}
+
+		if (amount + mConsumerCrsr > mBufferSize)
+		{
+			KUIntPtr toEnd = mBufferSize - mConsumerCrsr;
+			KUIntPtr fromBeginning = amount - toEnd;
+			(void) ::memcpy(
+				outBuffer,
+				(const void*) (mBuffer + mConsumerCrsr),
+				toEnd);
+			(void) ::memcpy(
+				((KUInt8*) outBuffer) + toEnd,
+				(const void*) mBuffer,
+				fromBeginning);
+		} else
+		{
+			(void) ::memcpy(
+				outBuffer,
+				(const void*) (mBuffer + mConsumerCrsr),
+				amount);
+		}
+	}
+
+	return amount;
+}
+
+// -------------------------------------------------------------------------- //
+//  * Discard( KUIntPtr )
+// -------------------------------------------------------------------------- //
+void
+TCircleBuffer::Discard(KUIntPtr inAmount)
+{
+	KUIntPtr amount = inAmount;
+	KUIntPtr max = AvailableBytes();
+
+	if (amount > max)
+	{
+		amount = max;
+	}
+
+	if (amount + mConsumerCrsr > mBufferSize)
+	{
+		mConsumerCrsr = amount - (mBufferSize - mConsumerCrsr);
+	} else
+	{
+		mConsumerCrsr += amount;
+	}
+}
+
 // ============================================================================== //
 // Giving up on assembly language was the apple in our Garden of Eden:  Languages //
 // whose use squanders machine cycles are sinful.  The LISP machine now permits   //

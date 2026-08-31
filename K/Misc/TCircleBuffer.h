@@ -78,6 +78,22 @@ public:
 	KUIntPtr Consume(void* outBuffer, KUIntPtr inAmount);
 
 	///
+	/// Copy data for the consumer without advancing the consumer cursor.
+	///
+	/// \param outBuffer	where to write data.
+	/// \param inAmount		number of bytes to copy.
+	/// \return the number of bytes actually copied.
+	///
+	KUIntPtr Peek(void* outBuffer, KUIntPtr inAmount);
+
+	///
+	/// Advance the consumer cursor without copying data.
+	///
+	/// \param inAmount		number of bytes to discard.
+	///
+	void Discard(KUIntPtr inAmount);
+
+	///
 	/// Determine if the buffer is empty.
 	///
 	/// \return \c true if the buffer is empty, false otherwise.
